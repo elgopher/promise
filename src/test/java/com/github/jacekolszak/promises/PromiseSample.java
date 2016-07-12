@@ -1,6 +1,6 @@
 package com.github.jacekolszak.promises;
 
-public class PromiseTest {
+public class PromiseSample {
 
     static  Object general, project;
 

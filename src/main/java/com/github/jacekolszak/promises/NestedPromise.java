@@ -1,8 +1,8 @@
 package com.github.jacekolszak.promises;
 
-public class SuccessPromisePromise<RESULT, NEW_RESULT> extends SuccessPromise<RESULT, Promise<NEW_RESULT>> {
+public class NestedPromise<RESULT, NEW_RESULT> extends SuccessPromise<RESULT, Promise<NEW_RESULT>> {
 
-    public SuccessPromisePromise(CheckedFunction thenFunction) {
+    public NestedPromise(CheckedFunction thenFunction) {
         super(thenFunction);
     }
 
@@ -14,6 +14,7 @@ public class SuccessPromisePromise<RESULT, NEW_RESULT> extends SuccessPromise<RE
                 setResult(r);
                 return r;
             });
+            newResult.catchVoid(this::reject);
         } catch (Throwable exception) {
             reject(exception);
         }

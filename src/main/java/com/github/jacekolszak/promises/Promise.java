@@ -16,9 +16,9 @@ public class Promise<RESULT> implements Thenable<RESULT> {
 
     private PromiseValue value;
 
-    public Promise(Executor<RESULT> executor) {
+    public Promise(CheckedConsumer<ExecutorParam<RESULT>> executor) {
         try {
-            executor.run(new ExecutorParam<>(this));
+            executor.accept(new ExecutorParam<>(this));
         } catch (Throwable throwable) {
             reject(throwable);
         }
@@ -62,7 +62,7 @@ public class Promise<RESULT> implements Thenable<RESULT> {
     @Override
     public synchronized <NEW_RESULT> Promise<NEW_RESULT> thenPromise(
             CheckedFunction<RESULT, Promise<NEW_RESULT>> then) {
-        SuccessPromisePromise next = new SuccessPromisePromise<>(then);
+        NestedPromise next = new NestedPromise<>(then);
         addNext(next);
         fireIfNecessarily();
         return next;
