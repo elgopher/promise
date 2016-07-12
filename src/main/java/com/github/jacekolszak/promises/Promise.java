@@ -46,6 +46,9 @@ public class Promise<RESULT> implements Thenable<RESULT> {
         }
     }
 
+    /**
+     * TODO Does this method should be thread safe?
+     */
     @Override
     public synchronized <NEW_RESULT> Promise<NEW_RESULT> then(CheckedFunction<RESULT, NEW_RESULT> then) {
         SuccessPromise next = new SuccessPromise<>(then);
@@ -54,6 +57,9 @@ public class Promise<RESULT> implements Thenable<RESULT> {
         return next;
     }
 
+    /**
+     * TODO Does this method should be thread safe?
+     */
     @Override
     public synchronized <NEW_RESULT> Promise<NEW_RESULT> thenPromise(
             CheckedFunction<RESULT, Promise<NEW_RESULT>> then) {
@@ -63,6 +69,9 @@ public class Promise<RESULT> implements Thenable<RESULT> {
         return next;
     }
 
+    /**
+     * TODO Does this method should be thread safe?
+     */
     @Override
     public synchronized <NEW_RESULT> Promise<NEW_RESULT> catchReturn(CheckedFunction<Throwable, NEW_RESULT> caught) {
         ErrorPromise next = new ErrorPromise<>(caught);

@@ -51,4 +51,36 @@ public class PromiseParallelSpec {
         return LongStream.range((long) Integer.MAX_VALUE - 5000, (long) Integer.MAX_VALUE + 5000);
     }
 
+    @Test
+    public void parallelPromiseRejectionNotPossible() throws InterruptedException {
+        // given
+        int threadsCount = (int) range().count();
+        ExecutorService executorService = Executors.newFixedThreadPool(threadsCount);
+        AtomicInteger thenExecutionsCount = new AtomicInteger(0);
+        CountDownLatch allThreadsReady = new CountDownLatch(threadsCount);
+
+        // when
+        new Promise<>(p ->
+                range().
+                        forEach(i -> executorService.submit(() -> {
+                            try {
+                                allThreadsReady.countDown();
+                                allThreadsReady.await();
+                                Thread.sleep(1);
+                                p.reject(new Exception("" + i));
+                            } catch (InterruptedException e) {
+                                fail(e.getMessage());
+                            }
+                        }))).
+                catchVoid(i -> {
+                    thenExecutionsCount.incrementAndGet();
+                    this.returnedResult = i;
+                });
+        executorService.awaitTermination(1, TimeUnit.SECONDS);
+
+        // then
+        assertEquals(1, thenExecutionsCount.get());
+        assertTrue(range().anyMatch(i -> Long.valueOf(((Throwable) returnedResult).getMessage()) == i));
+    }
+
 }
