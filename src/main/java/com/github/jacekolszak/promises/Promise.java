@@ -3,11 +3,6 @@ package com.github.jacekolszak.promises;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Placeholder for outcome
- * Includes callback code - then or catch
- * Contains multiple references to next promises
- */
 public class Promise<RESULT> implements Thenable<RESULT> {
 
     private List<Promise> next = new ArrayList<>();
@@ -39,13 +34,13 @@ public class Promise<RESULT> implements Thenable<RESULT> {
         fireError(e);
     }
 
-    public synchronized void resolve(RESULT result) {
+    synchronized void resolve(RESULT result) {
         if (!isValueSet()) {
             setResult(result);
         }
     }
 
-    public synchronized void reject(Throwable exception) {
+    synchronized void reject(Throwable exception) {
         if (!isValueSet()) {
             setException(exception);
         }

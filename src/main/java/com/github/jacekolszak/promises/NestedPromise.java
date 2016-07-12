@@ -7,7 +7,7 @@ public class NestedPromise<RESULT, NEW_RESULT> extends SuccessPromise<RESULT, Pr
     }
 
     @Override
-    public void resolve(RESULT result) {
+    void resolve(RESULT result) {
         try {
             Promise<NEW_RESULT> newResult = this.thenFunction.apply(result);
             newResult.then((r) -> {

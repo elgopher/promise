@@ -9,7 +9,7 @@ public class SuccessPromise<RESULT, NEW_RESULT> extends Promise<RESULT> {
     }
 
     @Override
-    public void resolve(RESULT result) {
+    void resolve(RESULT result) {
         try {
             NEW_RESULT newResult = this.thenFunction.apply(result);
             setResult(newResult);
