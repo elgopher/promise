@@ -1,25 +1,21 @@
 package com.github.jacekolszak.promises;
 
-import java.util.function.Function;
-
 public class ErrorPromise<RESULT, NEW_RESULT> extends Promise<RESULT> {
 
-    private Function<Throwable, NEW_RESULT> caughtFunction;
+    private CheckedFunction<Throwable, NEW_RESULT> caughtFunction;
 
-    public ErrorPromise(Function<Throwable, NEW_RESULT> caughtFunction) {
+    public ErrorPromise(CheckedFunction<Throwable, NEW_RESULT> caughtFunction) {
         this.caughtFunction = caughtFunction;
     }
 
     @Override
     public void reject(Throwable exception) {
+        NEW_RESULT newResult;
         try {
-            NEW_RESULT newResult = caughtFunction.apply(exception);
+            newResult = caughtFunction.apply(exception);
             setResult(newResult);
-            setException(null);
-            fire((RESULT) newResult);
         } catch (Throwable e) {
             setException(e);
-            fireError(exception);
         }
     }
 

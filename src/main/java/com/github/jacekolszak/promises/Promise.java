@@ -2,8 +2,6 @@ package com.github.jacekolszak.promises;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * Placeholder for outcome
@@ -14,72 +12,85 @@ public class Promise<RESULT> implements Thenable<RESULT> {
 
     private List<Promise> next = new ArrayList<>();
 
-    private Result<RESULT> result;
+    private PromiseStatus status = PromiseStatus.PENDING;
 
-    private Throwable exception;
+    private PromiseValue value;
 
-    public Promise(Consumer<ExecutorParam<RESULT>> executor) {
-        executor.accept(new ExecutorParam<>(this));
+    public Promise(Executor<RESULT> executor) {
+        try {
+            executor.run(new ExecutorParam<>(this));
+        } catch (Throwable throwable) {
+            reject(throwable);
+        }
     }
 
     Promise() {
     }
 
     protected void setResult(Object result) {
-        this.result = new Result(result);
+        this.status = PromiseStatus.RESOLVED;
+        this.value = new PromiseValue<>(result);
+        fire(result);
     }
 
     protected void setException(Throwable e) {
-        this.exception = e;
+        this.status = PromiseStatus.REJECTED;
+        this.value = new PromiseValue<>(e);
+        fireError(e);
     }
 
     public synchronized void resolve(RESULT result) {
-        setResult(result);
-        fire();
-    }
-
-    public synchronized void reject(Throwable exception) {
-        setException(exception);
-        fireError(exception);
-    }
-
-    @Override
-    public synchronized <NEW_RESULT> Promise<NEW_RESULT> then(Function<RESULT, NEW_RESULT> then) {
-        SuccessPromise next = new SuccessPromise<>(then);
-        addNext(next);
-        fire();
-        return next;
-    }
-
-    @Override
-    public synchronized <NEW_RESULT> Promise<NEW_RESULT> thenPromise(Function<RESULT, Promise<NEW_RESULT>> then) {
-        SuccessPromisePromise next = new SuccessPromisePromise<>(then);
-        addNext(next);
-        fire();
-        return next;
-    }
-
-    @Override
-    public synchronized <NEW_RESULT> Promise<NEW_RESULT> catchReturn(Function<Throwable, NEW_RESULT> caught) {
-        ErrorPromise next = new ErrorPromise<>(caught);
-        addNext(next);
-        fire();
-        return next;
-    }
-
-    private void fire() {
-        if (result != null) {
-            fire(result.result);
-        } else if (exception != null) {
-            fireError(exception);
+        if (!isValueSet()) {
+            setResult(result);
         }
     }
 
-    protected void fire(RESULT result) {
+    public synchronized void reject(Throwable exception) {
+        if (!isValueSet()) {
+            setException(exception);
+        }
+    }
+
+    @Override
+    public synchronized <NEW_RESULT> Promise<NEW_RESULT> then(CheckedFunction<RESULT, NEW_RESULT> then) {
+        SuccessPromise next = new SuccessPromise<>(then);
+        addNext(next);
+        fireIfNecessarily();
+        return next;
+    }
+
+    @Override
+    public synchronized <NEW_RESULT> Promise<NEW_RESULT> thenPromise(
+            CheckedFunction<RESULT, Promise<NEW_RESULT>> then) {
+        SuccessPromisePromise next = new SuccessPromisePromise<>(then);
+        addNext(next);
+        fireIfNecessarily();
+        return next;
+    }
+
+    @Override
+    public synchronized <NEW_RESULT> Promise<NEW_RESULT> catchReturn(CheckedFunction<Throwable, NEW_RESULT> caught) {
+        ErrorPromise next = new ErrorPromise<>(caught);
+        addNext(next);
+        fireIfNecessarily();
+        return next;
+    }
+
+    private void fireIfNecessarily() {
+        if (isValueSet()) {
+            if (status == PromiseStatus.RESOLVED) {
+                fire(value.value);
+            } else {
+                fireError((Throwable) value.value);
+            }
+        }
+    }
+
+    private void fire(Object result) {
         next.stream().forEach(next -> next.resolve(result));
     }
 
-    protected void fireError(Throwable exception) {
+    private void fireError(Throwable exception) {
         next.stream().forEach(next -> next.reject(exception));
     }
 
@@ -87,4 +98,14 @@ public class Promise<RESULT> implements Thenable<RESULT> {
         this.next.add(promise);
     }
 
+    protected boolean isValueSet() {
+        return value != null;
+    }
+
+    @Override
+    public String toString() {
+        return "Promise(" +
+                "status=" + status +
+                ", value=" + value + ")";
+    }
 }
