@@ -30,14 +30,4 @@ public class PromiseFactoryMethodsSpec {
         assertEquals(e, returnedObject);
     }
 
-    @Test
-    public void resolvePromise() {
-        String nestedValue = "OK";
-        Promise nestedPromise = new Promise<>(p -> p.resolve(nestedValue));
-        Promise.resolve(nestedPromise).
-                then(s -> returnedObject = s);
-
-        assertEquals(nestedValue, returnedObject);
-    }
-
 }

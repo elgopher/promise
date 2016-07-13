@@ -201,4 +201,17 @@ public class PromiseSpec {
         assertEquals(2, i.get());
     }
 
+    @Test
+    public void everyCatchCallbackCanBeExecutedOnlyOnce() {
+        // given
+        AtomicInteger i = new AtomicInteger();
+        Promise<String> promise = new Promise<>(p -> p.reject(new Exception()));
+        promise.catchVoid(s -> i.incrementAndGet());
+
+        // when
+        promise.catchVoid(s -> i.incrementAndGet());
+
+        // then
+        assertEquals(2, i.get());
+    }
 }
