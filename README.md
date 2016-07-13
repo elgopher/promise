@@ -21,16 +21,30 @@ Promises API for Java 8 strongly inspired by ECMAScript 6.0
 # Example
 
 ```java
-     httpGet("http://github.com").
-             then(String::trim).
-             then(String::toLowerCase).
-             thenVoid(System.out::println).
-             catchVoid(System.err::println);
- 
-     private Promise<String> httpGet(String url) {
-         return new Promise<>(p -> {
-             // execute HTTP request asynchronously here (Netty etc.)
-             p.resolve("Some RESPONSE from remote host " + url);
-         });
-     }
+httpGet("http://github.com").
+        then(String::trim).
+        then(String::toLowerCase).
+        thenVoid(System.out::println).
+        catchVoid(System.err::println);
+
+private Promise<String> httpGet(String url) {
+    return new Promise<>(p -> {
+        // execute HTTP request asynchronously here (Netty etc.)
+        p.resolve("Some RESPONSE from remote host " + url);
+    });
+}
+```
+
+# How to use in Gradle
+
+```groovy
+repositories {
+    maven {
+        url  "http://dl.bintray.com/jacekolszak/maven" 
+    }    
+}
+
+dependencies {
+    compile  "com.github.jacekolszak:promises:0.5"
+}
 ```
