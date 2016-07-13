@@ -33,7 +33,7 @@ public class PromiseFactoryMethodsSpec {
     @Test
     public void resolveWithPromiseParameterShouldReturnValueFromThisPromise() {
         String nestedValue = "OK";
-        Promise nestedPromise = new Promise<>(p -> p.resolve(nestedValue));
+        Promise<String> nestedPromise = new Promise<>(p -> p.resolve(nestedValue));
         Promise.resolve(nestedPromise).then(s -> returnedObject = s);
 
         assertEquals(nestedValue, returnedObject);
