@@ -22,6 +22,7 @@ public class PromiseParallelSpec {
         ExecutorService executorService = Executors.newFixedThreadPool(threadsCount);
         AtomicInteger thenExecutionsCount = new AtomicInteger(0);
         CountDownLatch allThreadsReady = new CountDownLatch(threadsCount);
+        CountDownLatch allThreadsExecuted = new CountDownLatch(threadsCount);
 
         // when
         new Promise<>(p ->
@@ -32,6 +33,7 @@ public class PromiseParallelSpec {
                                 allThreadsReady.await();
                                 Thread.sleep(1);
                                 p.resolve(i);
+                                allThreadsExecuted.countDown();
                             } catch (InterruptedException e) {
                                 fail(e.getMessage());
                             }
@@ -40,7 +42,8 @@ public class PromiseParallelSpec {
                     thenExecutionsCount.incrementAndGet();
                     this.returnedResult = i;
                 });
-        executorService.awaitTermination(1, TimeUnit.SECONDS);
+        allThreadsExecuted.await();
+        executorService.shutdown();
 
         // then
         assertEquals(1, thenExecutionsCount.get());
@@ -58,6 +61,7 @@ public class PromiseParallelSpec {
         ExecutorService executorService = Executors.newFixedThreadPool(threadsCount);
         AtomicInteger thenExecutionsCount = new AtomicInteger(0);
         CountDownLatch allThreadsReady = new CountDownLatch(threadsCount);
+        CountDownLatch allThreadsExecuted = new CountDownLatch(threadsCount);
 
         // when
         new Promise<>(p ->
@@ -68,6 +72,7 @@ public class PromiseParallelSpec {
                                 allThreadsReady.await();
                                 Thread.sleep(1);
                                 p.reject(new Exception("" + i));
+                                allThreadsExecuted.countDown();
                             } catch (InterruptedException e) {
                                 fail(e.getMessage());
                             }
@@ -76,7 +81,8 @@ public class PromiseParallelSpec {
                     thenExecutionsCount.incrementAndGet();
                     this.returnedResult = i;
                 });
-        executorService.awaitTermination(1, TimeUnit.SECONDS);
+        allThreadsExecuted.await();
+        executorService.shutdown();
 
         // then
         assertEquals(1, thenExecutionsCount.get());
