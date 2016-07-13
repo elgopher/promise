@@ -1,5 +1,5 @@
 # Promises for Java 8
-Promises API for Java 8 strongly inspired by ECMAScript 6.0
+Promises for Java 8 strongly inspired by ECMAScript 6.0
 
 [![Build status](https://travis-ci.org/jacekolszak/promises.svg?branch=master)](https://travis-ci.org/jacekolszak/promises)
 
