@@ -95,8 +95,8 @@ public class Promise<RESULT> implements Thenable<RESULT> {
         next.stream().forEach(next -> next.doReject(exception));
     }
 
-    private void addNext(Promise promise) {
-        this.next.add(new NextPromise(promise));
+    private void addNext(Promise<Object> promise) {
+        this.next.add(new NextPromise<>(promise));
     }
 
     protected boolean isValueSet() {
@@ -110,8 +110,12 @@ public class Promise<RESULT> implements Thenable<RESULT> {
                 ", value=" + value + ")";
     }
 
-    public static <V> Promise<V> resolve(V valueOrPromise) {
-        return new Promise<>(p -> p.resolve(valueOrPromise));
+    public static <V> Promise<V> resolve(V value) {
+        return new Promise<>(p -> p.resolve(value));
+    }
+
+    public static <T> Promise<T> resolve(Promise<T> promise) {
+        return new Promise<>(p -> p.resolve((T) promise));
     }
 
     public static <R extends Throwable> Promise<R> reject(R exception) {

@@ -9,7 +9,7 @@ class SuccessPromise<IN, OUT> extends Promise<IN> {
     }
 
     @Override
-    void doResolve(IN in) {
+    synchronized void doResolve(IN in) {
         try {
             if (in instanceof Promise) {
                 doResolvePromise((Promise<IN>) in);
