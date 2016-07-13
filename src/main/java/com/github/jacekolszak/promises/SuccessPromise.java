@@ -1,6 +1,6 @@
 package com.github.jacekolszak.promises;
 
-public class SuccessPromise<RESULT, NEW_RESULT> extends Promise<RESULT> {
+class SuccessPromise<RESULT, NEW_RESULT> extends Promise<RESULT> {
 
     protected CheckedFunction<RESULT, NEW_RESULT> thenFunction;
 

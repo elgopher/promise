@@ -1,6 +1,6 @@
 package com.github.jacekolszak.promises;
 
-public class PromiseValue<RESULT> {
+class PromiseValue<RESULT> {
 
     public final RESULT value;
 

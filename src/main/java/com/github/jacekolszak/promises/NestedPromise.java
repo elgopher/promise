@@ -1,6 +1,6 @@
 package com.github.jacekolszak.promises;
 
-public class NestedPromise<RESULT, NEW_RESULT> extends SuccessPromise<RESULT, Promise<NEW_RESULT>> {
+class NestedPromise<RESULT, NEW_RESULT> extends SuccessPromise<RESULT, Promise<NEW_RESULT>> {
 
     public NestedPromise(CheckedFunction thenFunction) {
         super(thenFunction);

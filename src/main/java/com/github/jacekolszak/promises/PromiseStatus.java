@@ -1,6 +1,6 @@
 package com.github.jacekolszak.promises;
 
-public enum PromiseStatus {
+enum PromiseStatus {
 
     PENDING, RESOLVED, REJECTED
 

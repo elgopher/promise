@@ -1,6 +1,6 @@
 package com.github.jacekolszak.promises;
 
-public class ErrorPromise<RESULT, NEW_RESULT> extends Promise<RESULT> {
+class ErrorPromise<RESULT, NEW_RESULT> extends Promise<RESULT> {
 
     private CheckedFunction<Throwable, NEW_RESULT> caughtFunction;
 
