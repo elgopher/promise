@@ -15,7 +15,7 @@ Promises API for Java 8 strongly inspired by ECMAScript 6.0
 * Because JavaScript's Promises are simple, elegant and powerful
 
 # When it should not be used?
-* Promises are for one-shot requests, that is, you can send the request and get a self-contained response, no events in the middle
+* Promises are for one-shot requests, that is, you can send a request and get a self-contained response, no events in the middle
 * When you need to monitor progress or map stream of events then use RxJava instead
 
 # Example
@@ -35,7 +35,9 @@ private Promise<String> httpGet(String url) {
 }
 ```
 
-# How to use in Gradle
+# How to use with Gradle
+
+Add repository to your build.gradle file:
 
 ```groovy
 repositories {
@@ -43,7 +45,11 @@ repositories {
         url  "http://dl.bintray.com/jacekolszak/maven" 
     }    
 }
+```
 
+And use the artifact like this:
+
+```groovy
 dependencies {
     compile  "com.github.jacekolszak:promises:0.5"
 }
