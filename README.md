@@ -7,15 +7,15 @@ Promises API for Java 8 strongly inspired by ECMAScript 6.0
 * placeholder for a value (or an exception) returned from an asynchronous operation
 * internally a promise has three states: pending, resolved, rejected
 * after a promise is resolved or rejected its state and value can never be changed
-* you can write asynchronous code by chaining promises together
-* exceptions thrown by promises are propagated through promise chains
+* asynchronous code can be written by chaining promises together
+* exception thrown by a promise is propagated through promise chains
 
 ## Why would I use it?
 * because it is a much more cleaner alternative to Java 8 CompletableFuture (TODO write here some proofs)
 
 ## When it should not be used?
 * Promises are for one-shot operations, that is, you can execute some method and get a self-contained response, i.e. get some REST resource
-* When you need to monitor progress of the execution or process stream of events then use RxJava instead
+* When you need to monitor progress of the execution or process a stream of events then use RxJava instead
 
 ## Example
 
