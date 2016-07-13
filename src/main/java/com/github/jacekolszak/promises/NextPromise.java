@@ -1,16 +1,16 @@
 package com.github.jacekolszak.promises;
 
-public class NextPromise<T> {
+public class NextPromise {
 
-    private final Promise<T> promise;
+    private final Promise promise;
 
     private boolean executed;
 
-    public NextPromise(Promise<T> promise) {
+    public NextPromise(Promise promise) {
         this.promise = promise;
     }
 
-    void doResolve(T result) {
+    void doResolve(Object result) {
         if (!executed) {
             executed = true;
             promise.doResolve(result);

@@ -25,7 +25,7 @@ public class Promise<RESULT> implements Thenable<RESULT> {
     protected void setResult(Object result) {
         if (!isValueSet()) {
             this.status = PromiseStatus.RESOLVED;
-            this.value = new PromiseValue<>(result);
+            this.value = new PromiseValue(result);
             fire(result);
         }
     }
@@ -33,7 +33,7 @@ public class Promise<RESULT> implements Thenable<RESULT> {
     protected void setException(Throwable e) {
         if (!isValueSet()) {
             this.status = PromiseStatus.REJECTED;
-            this.value = new PromiseValue<>(e);
+            this.value = new PromiseValue(e);
             fireError(e);
         }
     }
@@ -60,10 +60,10 @@ public class Promise<RESULT> implements Thenable<RESULT> {
      */
     @Override
     public synchronized <NEW_RESULT> Promise<NEW_RESULT> then(CheckedFunction<RESULT, NEW_RESULT> then) {
-        SuccessPromise next = new SuccessPromise<>(then);
+        SuccessPromise<RESULT, NEW_RESULT> next = new SuccessPromise<>(then);
         addNext(next);
         fireIfNecessarily();
-        return next;
+        return (Promise<NEW_RESULT>) next;
     }
 
     /**
@@ -95,8 +95,8 @@ public class Promise<RESULT> implements Thenable<RESULT> {
         next.stream().forEach(next -> next.doReject(exception));
     }
 
-    private void addNext(Promise<Object> promise) {
-        this.next.add(new NextPromise<>(promise));
+    private void addNext(Promise<RESULT> promise) {
+        this.next.add(new NextPromise(promise));
     }
 
     protected boolean isValueSet() {

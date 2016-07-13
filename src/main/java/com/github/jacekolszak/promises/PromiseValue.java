@@ -1,10 +1,10 @@
 package com.github.jacekolszak.promises;
 
-class PromiseValue<RESULT> {
+class PromiseValue {
 
-    public final RESULT value;
+    public final Object value;
 
-    public PromiseValue(RESULT value) {
+    public PromiseValue(Object value) {
         this.value = value;
     }
 
