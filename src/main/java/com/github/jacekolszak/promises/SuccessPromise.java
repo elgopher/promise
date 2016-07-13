@@ -1,18 +1,22 @@
 package com.github.jacekolszak.promises;
 
-class SuccessPromise<RESULT, NEW_RESULT> extends Promise<RESULT> {
+class SuccessPromise<IN, OUT> extends Promise<IN> {
 
-    protected CheckedFunction<RESULT, NEW_RESULT> thenFunction;
+    protected CheckedFunction<IN, OUT> thenFunction;
 
-    public SuccessPromise(CheckedFunction<RESULT, NEW_RESULT> thenFunction) {
+    public SuccessPromise(CheckedFunction<IN, OUT> thenFunction) {
         this.thenFunction = thenFunction;
     }
 
     @Override
-    void resolve(RESULT result) {
+    void doResolve(IN in) {
         try {
-            NEW_RESULT newResult = this.thenFunction.apply(result);
-            setResult(newResult);
+            if (in instanceof Promise) {
+                doResolvePromise((Promise<IN>) in);
+            } else {
+                OUT out = this.thenFunction.apply(in);
+                setResult(out);
+            }
         } catch (Throwable exception) {
             setException(exception);
         }

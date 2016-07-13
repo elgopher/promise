@@ -9,7 +9,7 @@ class ErrorPromise<RESULT, NEW_RESULT> extends Promise<RESULT> {
     }
 
     @Override
-    void reject(Throwable exception) {
+    void doReject(Throwable exception) {
         NEW_RESULT newResult;
         try {
             newResult = caughtFunction.apply(exception);

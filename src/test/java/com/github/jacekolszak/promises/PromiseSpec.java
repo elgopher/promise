@@ -3,6 +3,7 @@ package com.github.jacekolszak.promises;
 import static org.junit.Assert.*;
 
 import java.util.BitSet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +30,15 @@ public class PromiseSpec {
         new Promise<>(p -> p.reject(exception)).catchVoid(t -> returnedValue = t);
 
         assertSame(exception, returnedValue);
+    }
+
+    @Test
+    public void newPromisePassedToResolveShouldBeBoundedToOriginalPromise() {
+        Promise<String> nestedPromise = new Promise<>(nested -> nested.resolve("OK"));
+        new Promise<>(p -> p.resolve(nestedPromise)).
+                then(s -> returnedValue = s);
+
+        assertEquals("OK", returnedValue);
     }
 
     @Test
@@ -126,7 +136,7 @@ public class PromiseSpec {
         Exception nested = new Exception();
         new Promise<>(p -> p.resolve("OUTER")).
                 thenPromise(s -> new Promise<>(p -> p.reject(nested))).
-                catchVoid(t -> returnedValue = t);
+                catchReturn(t -> returnedValue = t);
 
         assertEquals(nested, returnedValue);
     }
@@ -162,6 +172,33 @@ public class PromiseSpec {
         Promise<String> promise = new Promise<>(p -> p.reject(e));
 
         assertEquals("Promise(status=REJECTED, value=" + e + ")", promise.toString());
+    }
+
+    @Test
+    public void thenCanBeAddedAfterPromiseWasResolvedAndNextPromiseWasExecuted() {
+        // given
+        Promise<String> promise = new Promise<>(p -> p.resolve("OK"));
+        promise.thenVoid(s -> {});
+
+        // when
+        promise.then(s ->  returnedValue = s);
+
+        // then
+        assertEquals("OK", returnedValue);
+    }
+
+    @Test
+    public void everyThenCallbackCanBeExecutedOnlyOnce() {
+        // given
+        AtomicInteger i = new AtomicInteger();
+        Promise<String> promise = new Promise<>(p -> p.resolve("OK"));
+        promise.thenVoid(s -> i.incrementAndGet());
+
+        // when
+        promise.thenVoid(s -> i.incrementAndGet());
+
+        // then
+        assertEquals(2, i.get());
     }
 
 }

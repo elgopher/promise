@@ -1,19 +1,19 @@
 package com.github.jacekolszak.promises;
 
-public class ExecutorParam<RESULT> {
+public class PromiseCallbacks<RESULT> {
 
     private final Promise<RESULT> promise;
 
-    public ExecutorParam(Promise<RESULT> promise) {
+    public PromiseCallbacks(Promise<RESULT> promise) {
         this.promise = promise;
     }
 
     public void resolve(RESULT object) {
-        promise.resolve(object);
+        promise.doResolve(object);
     }
 
     public void reject(Throwable exception) {
-        promise.reject(exception);
+        promise.doReject(exception);
     }
 
 }

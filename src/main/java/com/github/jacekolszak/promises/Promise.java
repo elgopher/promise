@@ -5,45 +5,54 @@ import java.util.List;
 
 public class Promise<RESULT> implements Thenable<RESULT> {
 
-    private List<Promise> next = new ArrayList<>();
+    private List<NextPromise> next = new ArrayList<>();
 
     private PromiseStatus status = PromiseStatus.PENDING;
 
     private PromiseValue value;
 
-    public Promise(CheckedConsumer<ExecutorParam<RESULT>> executor) {
+    public Promise(CheckedConsumer<PromiseCallbacks<RESULT>> executor) {
         try {
-            executor.accept(new ExecutorParam<>(this));
+            executor.accept(new PromiseCallbacks<>(this));
         } catch (Throwable throwable) {
-            reject(throwable);
+            doReject(throwable);
         }
     }
 
-    Promise() {
+    protected Promise() {
     }
 
     protected void setResult(Object result) {
-        this.status = PromiseStatus.RESOLVED;
-        this.value = new PromiseValue<>(result);
-        fire(result);
+        if (!isValueSet()) {
+            this.status = PromiseStatus.RESOLVED;
+            this.value = new PromiseValue<>(result);
+            fire(result);
+        }
     }
 
     protected void setException(Throwable e) {
-        this.status = PromiseStatus.REJECTED;
-        this.value = new PromiseValue<>(e);
-        fireError(e);
+        if (!isValueSet()) {
+            this.status = PromiseStatus.REJECTED;
+            this.value = new PromiseValue<>(e);
+            fireError(e);
+        }
     }
 
-    synchronized void resolve(RESULT result) {
-        if (!isValueSet()) {
+    protected synchronized void doResolvePromise(Promise<RESULT> promise) {
+        promise.thenVoid(this::doResolve);
+        promise.catchVoid(this::doReject);
+    }
+
+    synchronized void doResolve(RESULT result) {
+        if (result instanceof Promise) {
+            doResolvePromise((Promise<RESULT>) result);
+        } else {
             setResult(result);
         }
     }
 
-    synchronized void reject(Throwable exception) {
-        if (!isValueSet()) {
-            setException(exception);
-        }
+    synchronized void doReject(Throwable exception) {
+        setException(exception);
     }
 
     /**
@@ -52,18 +61,6 @@ public class Promise<RESULT> implements Thenable<RESULT> {
     @Override
     public synchronized <NEW_RESULT> Promise<NEW_RESULT> then(CheckedFunction<RESULT, NEW_RESULT> then) {
         SuccessPromise next = new SuccessPromise<>(then);
-        addNext(next);
-        fireIfNecessarily();
-        return next;
-    }
-
-    /**
-     * TODO Does this method should be thread safe?
-     */
-    @Override
-    public synchronized <NEW_RESULT> Promise<NEW_RESULT> thenPromise(
-            CheckedFunction<RESULT, Promise<NEW_RESULT>> then) {
-        NestedPromise next = new NestedPromise<>(then);
         addNext(next);
         fireIfNecessarily();
         return next;
@@ -91,15 +88,15 @@ public class Promise<RESULT> implements Thenable<RESULT> {
     }
 
     private void fire(Object result) {
-        next.stream().forEach(next -> next.resolve(result));
+        next.stream().forEach(next -> next.doResolve(result));
     }
 
     private void fireError(Throwable exception) {
-        next.stream().forEach(next -> next.reject(exception));
+        next.stream().forEach(next -> next.doReject(exception));
     }
 
     private void addNext(Promise promise) {
-        this.next.add(promise);
+        this.next.add(new NextPromise(promise));
     }
 
     protected boolean isValueSet() {
@@ -112,4 +109,13 @@ public class Promise<RESULT> implements Thenable<RESULT> {
                 "status=" + status +
                 ", value=" + value + ")";
     }
+
+    public static <V> Promise<V> resolve(V valueOrPromise) {
+        return new Promise<>(p -> p.resolve(valueOrPromise));
+    }
+
+    public static <R extends Throwable> Promise<R> reject(R exception) {
+        return new Promise<>(p -> p.reject(exception));
+    }
+
 }
