@@ -3,20 +3,19 @@ Promises API for Java 8 strongly inspired by ECMAScript 6.0
 
 [![Build status](https://travis-ci.org/jacekolszak/promises.svg?branch=master)](https://travis-ci.org/jacekolszak/promises)
 
-## Goals
-* Make API looking and behaving as ECMAScript 6.0 Promises
-* Use all bleeding edge features of Java 8
-* API should allow to write code which is concise and easy to reason about 
-* API could be used with any other libraries and frameworks which executes code asynchronously such as Netty
-* Promises created using API should be thread safe
+## What is a Promise?
+* placeholder for a value (or an exception) returned from an asynchronous operation
+* internally a promise has three states: pending, resolved, rejected
+* after a promise is resolved or rejected its state and value can never be changed
+* you can write asynchronous code by chaining promises together
+* exceptions thrown by promises are propagated through promise chains
 
-## Why?
-* Because I wanted to have an alternative to writing code with CompletableFutures
-* Because JavaScript's Promises are simple, elegant and powerful
+## Why would I use it?
+* because it is a much more cleaner alternative to Java 8 CompletableFuture (TODO write here some proofs)
 
 ## When it should not be used?
-* Promises are for one-shot requests, that is, you can send a request and get a self-contained response, no events in the middle
-* When you need to monitor progress or map stream of events then use RxJava instead
+* Promises are for one-shot operations, that is, you can execute some method and get a self-contained response, i.e. get some REST resource
+* When you need to monitor progress of the execution or process stream of events then use RxJava instead
 
 ## Example
 
