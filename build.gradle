@@ -21,3 +21,9 @@ jar {
                    'Implementation-Version': version
     }
 }
+
+tasks.withType(Test) {
+    // limit the number of processors and initial amount of memory used by Test tasks
+    maxParallelForks = 2
+    minHeapSize = '128m'
+}
