@@ -1,5 +1,5 @@
 # Promises for Java 8
-Promises for Java 8 strongly inspired by ECMAScript 6.0. Write asynchronous code the way JavaScript does.
+Promises for Java 8 strongly inspired by [ECMAScript 6.0](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). Write asynchronous code the way JavaScript does.
 
 [![Build status](https://travis-ci.org/jacekolszak/promises.svg?branch=master)](https://travis-ci.org/jacekolszak/promises)
 
@@ -14,8 +14,8 @@ Promises for Java 8 strongly inspired by ECMAScript 6.0. Write asynchronous code
 * because it is better suited for writing asynchronous code than Java 8's CompletableFuture
     * API is much cleaner and easier to understand - just 2 instance methods and 4 static companion methods 
     * exceptions are properly caught and propagated to *catch* callbacks (no fear that some exception will be eaten up)
-    * code written using Promises is more readable and easier to understand
     * exceptions can be handled similar way as they are normally handled in a blocking code
+    * code written using Promises is more readable and easier to understand
 
 ## When it should not be used?
 * Promises are for one-shot operations, that is, you can execute some method and get a self-contained response, i.e. get some REST resource
@@ -24,19 +24,29 @@ Promises for Java 8 strongly inspired by ECMAScript 6.0. Write asynchronous code
 ## Example
 
 ```java
-httpGet("http://github.com").
-        then(String::trim).
+getJSON("http://github.com").
+        then(resp -> resp.get("someProperty")).
         then(String::toLowerCase).
         thenVoid(System.out::println).
-        catchVoid(System.err::println);
+        catchVoid(Throwable::printStackTrace);
 
-private Promise<String> httpGet(String url) {
+getJSON("http://github.com").
+        thenPromise(resp -> getJSON(resp.get("otherURL"))).
+        thenVoid(System.out::println).
+        catchVoid(Throwable::printStackTrace);
+
+private Promise<Map<String, String>> getJSON(String url) {
     return new Promise<>(p -> {
         // execute HTTP request asynchronously here (Netty etc.)
-        p.resolve("Some RESPONSE from remote host " + url);
+        Map<String, String> json = new HashMap<>();
+        json.put("someProperty", "value");
+        json.put("otherURL", "http://google.com");
+        p.resolve(json);
     });
 }
 ```
+
+Source code: [PromiseSamples.java](src/test/java/com/github/jacekolszak/promises/samples/PromiseSamples.java)
 
 ## How to use with Gradle
 
