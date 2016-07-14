@@ -122,7 +122,7 @@ public class Promise<RESULT> implements Thenable<RESULT> {
         return new Promise<>(p -> p.reject(exception));
     }
 
-    public static Promise<Object[]> all(Object[] objects) {
+    public static Promise<Object[]> all(Object... objects) {
         return new Promise<>(p -> new PromiseAll(objects, p));
     }
 
