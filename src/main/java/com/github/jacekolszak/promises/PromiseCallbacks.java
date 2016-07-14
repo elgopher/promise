@@ -4,7 +4,7 @@ public class PromiseCallbacks<RESULT> {
 
     private final Promise<RESULT> promise;
 
-    public PromiseCallbacks(Promise<RESULT> promise) {
+    PromiseCallbacks(Promise<RESULT> promise) {
         this.promise = promise;
     }
 

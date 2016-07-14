@@ -38,14 +38,14 @@ public class Promise<RESULT> implements Thenable<RESULT> {
         }
     }
 
-    protected synchronized void doResolvePromise(Promise<RESULT> promise) {
+    protected synchronized void doResolvePromise(Thenable<RESULT> promise) {
         promise.thenVoid(this::doResolve);
         promise.catchVoid(this::doReject);
     }
 
     synchronized void doResolve(RESULT result) {
-        if (result instanceof Promise) {
-            doResolvePromise((Promise<RESULT>) result);
+        if (result instanceof Thenable) {
+            doResolvePromise((Thenable<RESULT>) result);
         } else {
             setResult(result);
         }
@@ -114,7 +114,7 @@ public class Promise<RESULT> implements Thenable<RESULT> {
         return new Promise<>(p -> p.resolve(value));
     }
 
-    public static <T> Promise<T> resolve(Promise<T> promise) {
+    public static <T> Promise<T> resolve(Thenable<T> promise) {
         return new Promise<>(p -> p.resolve((T) promise));
     }
 
