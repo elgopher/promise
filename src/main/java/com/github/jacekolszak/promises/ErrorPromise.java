@@ -2,7 +2,7 @@ package com.github.jacekolszak.promises;
 
 class ErrorPromise<RESULT, NEW_RESULT> extends Promise<RESULT> {
 
-    private CheckedFunction<Throwable, NEW_RESULT> caughtFunction;
+    private final CheckedFunction<Throwable, NEW_RESULT> caughtFunction;
 
     public ErrorPromise(CheckedFunction<Throwable, NEW_RESULT> caughtFunction) {
         this.caughtFunction = caughtFunction;

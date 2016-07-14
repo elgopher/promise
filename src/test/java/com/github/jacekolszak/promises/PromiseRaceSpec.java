@@ -8,11 +8,11 @@ import org.junit.Test;
 
 public class PromiseRaceSpec {
 
-    Object resolvedValue;
+    private Object resolvedValue;
 
-    Throwable rejectedException;
+    private Throwable rejectedException;
 
-    CountDownLatch latch = new CountDownLatch(1);
+    private final CountDownLatch latch = new CountDownLatch(1);
 
     @Test
     public void shouldResolveReturningFirstResolvedValue() {

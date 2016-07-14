@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Promise<RESULT> implements Thenable<RESULT> {
 
-    private List<NextPromise> next = new ArrayList<>();
+    private final List<NextPromise> next = new ArrayList<>();
 
     private PromiseStatus status = PromiseStatus.PENDING;
 
@@ -19,10 +19,10 @@ public class Promise<RESULT> implements Thenable<RESULT> {
         }
     }
 
-    protected Promise() {
+    Promise() {
     }
 
-    protected void setResult(Object result) {
+    void setResult(Object result) {
         if (!isValueSet()) {
             this.status = PromiseStatus.RESOLVED;
             this.value = new PromiseValue(result);
@@ -30,7 +30,7 @@ public class Promise<RESULT> implements Thenable<RESULT> {
         }
     }
 
-    protected void setException(Throwable e) {
+    void setException(Throwable e) {
         if (!isValueSet()) {
             this.status = PromiseStatus.REJECTED;
             this.value = new PromiseValue(e);
@@ -38,7 +38,7 @@ public class Promise<RESULT> implements Thenable<RESULT> {
         }
     }
 
-    protected void doResolvePromise(Thenable<RESULT> promise) {
+    void doResolvePromise(Thenable<RESULT> promise) {
         promise.thenVoid(this::doResolve);
         promise.catchVoid(this::doReject);
     }
@@ -93,7 +93,7 @@ public class Promise<RESULT> implements Thenable<RESULT> {
         this.next.add(new NextPromise(promise));
     }
 
-    protected boolean isValueSet() {
+    private boolean isValueSet() {
         return value != null;
     }
 

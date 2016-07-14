@@ -2,7 +2,7 @@ package com.github.jacekolszak.promises;
 
 class SuccessPromise<IN, OUT> extends Promise<IN> {
 
-    protected CheckedFunction<IN, OUT> thenFunction;
+    private final CheckedFunction<IN, OUT> thenFunction;
 
     public SuccessPromise(CheckedFunction<IN, OUT> thenFunction) {
         this.thenFunction = thenFunction;
