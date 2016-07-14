@@ -10,6 +10,7 @@ import java.util.stream.LongStream;
 
 import org.junit.Test;
 
+// TODO use thread jiggling to increase the chance of failure
 public class PromiseParallelSpec {
 
     private Object resolvedValue;
