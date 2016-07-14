@@ -16,6 +16,7 @@ Promises for Java 8 strongly inspired by [ECMAScript 6.0](https://developer.mozi
     * exceptions are properly caught and propagated to *catch* callbacks (no fear that some exception will be eaten up)
     * exceptions can be handled similar way as they are normally handled in a blocking code
     * code written using Promises is more readable and easier to understand
+* well tested (100% code covered by unit tests)
 
 ## When it should not be used?
 * Promises are for one-shot operations, that is, you can execute some method and get a self-contained response (or error), i.e. get some REST resource
