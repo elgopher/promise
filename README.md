@@ -24,42 +24,53 @@ Promises for Java 8 strongly inspired by [ECMAScript 6.0](https://developer.mozi
 ## Examples
 
 ```java
-getJSON("http://github.com").
-        then(resp -> resp.get("someProperty")).
-        then(String::toLowerCase).
-        thenVoid(System.out::println).
-        catchVoid(Throwable::printStackTrace);
+public void loadFakeJSON() {
+    getJSON("http://github.com").
+            then(json -> json.get("someProperty")).
+            then(String::toLowerCase).
+            thenVoid(System.out::println).
+            catchVoid(Throwable::printStackTrace);
+}
 
-getJSON("http://github.com").
-        thenPromise(resp -> getJSON(resp.get("otherURL"))).
-        thenVoid(System.out::println).
-        catchVoid(Throwable::printStackTrace);
-        
-getJSON("http://unreliable-url.com").
-        catchReturn(resp -> {
-            Map<String, String> fallbackJSON = new HashMap<>();
-            fallbackJSON.put("someProperty", "defaultValue");
-            fallbackJSON.put("otherURL", "http://default-url.com");
-            return fallbackJSON;
-        }).
-        thenVoid(System.out::println).
-        catchVoid(Throwable::printStackTrace);
+public void loadJSONSequentially() {
+    getJSON("http://github.com").
+            thenPromise(json -> getJSON(json.get("otherURL"))).
+            thenVoid(System.out::println).
+            catchVoid(Throwable::printStackTrace);
+}
 
-Promise.all(
-        getJSON("https://fake-url.com/resources/1"),
-        getJSON("https://fake-url.com/resources/2"),
-        getJSON("https://fake-url.com/resources/3")
-).thenVoid(resp -> {
-        System.out.println(resp[0]);
-        System.out.println(resp[1]);
-        System.out.println(resp[2]);
-});
+public void catchFallback() {
+    getJSON("http://unreliable-url.com").
+            catchReturn(json -> {
+                Map<String, String> fallbackJSON = new HashMap<>();
+                fallbackJSON.put("someProperty", "defaultValue");
+                fallbackJSON.put("otherURL", "http://default-url.com");
+                return fallbackJSON;
+            }).
+            thenVoid(System.out::println).
+            catchVoid(Throwable::printStackTrace);
+}
 
-Promise.race(
-        getJSON("https://fake-url.com/resources/1"),
-        getJSON("https://fake-url.com/resources/2"),
-        getJSON("https://fake-url.com/resources/3")
-).thenVoid(System.out::println);
+public void all() {
+    Promise.all(
+            getJSON("https://fake-url.com/resources/1"),
+            getJSON("https://fake-url.com/resources/2"),
+            getJSON("https://fake-url.com/resources/3")
+    ).thenVoid(jsons -> {
+        System.out.println(jsons[0]);
+        System.out.println(jsons[1]);
+        System.out.println(jsons[2]);
+    });
+}
+
+public void race() {
+    Promise.race(
+            getJSON("https://fake-url.com/resources/1"),
+            getJSON("https://fake-url.com/resources/2"),
+            getJSON("https://fake-url.com/resources/3")
+    ).thenVoid(System.out::println);
+}
+
 
 private Promise<Map<String, String>> getJSON(String url) {
     return new Promise<>(p -> {

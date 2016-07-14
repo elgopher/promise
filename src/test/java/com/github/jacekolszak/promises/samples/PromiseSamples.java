@@ -12,7 +12,7 @@ public class PromiseSamples {
     @Test
     public void loadFakeJSON() {
         getJSON("http://github.com").
-                then(resp -> resp.get("someProperty")).
+                then(json -> json.get("someProperty")).
                 then(String::toLowerCase).
                 thenVoid(System.out::println).
                 catchVoid(Throwable::printStackTrace);
@@ -21,7 +21,7 @@ public class PromiseSamples {
     @Test
     public void loadJSONSequentially() {
         getJSON("http://github.com").
-                thenPromise(resp -> getJSON(resp.get("otherURL"))).
+                thenPromise(json -> getJSON(json.get("otherURL"))).
                 thenVoid(System.out::println).
                 catchVoid(Throwable::printStackTrace);
     }
@@ -29,7 +29,7 @@ public class PromiseSamples {
     @Test
     public void catchFallback() {
         getJSON("http://unreliable-url.com").
-                catchReturn(resp -> {
+                catchReturn(json -> {
                     Map<String, String> fallbackJSON = new HashMap<>();
                     fallbackJSON.put("someProperty", "defaultValue");
                     fallbackJSON.put("otherURL", "http://default-url.com");
@@ -45,10 +45,10 @@ public class PromiseSamples {
                 getJSON("https://fake-url.com/resources/1"),
                 getJSON("https://fake-url.com/resources/2"),
                 getJSON("https://fake-url.com/resources/3")
-        ).thenVoid(resp -> {
-            System.out.println(resp[0]);
-            System.out.println(resp[1]);
-            System.out.println(resp[2]);
+        ).thenVoid(jsons -> {
+            System.out.println(jsons[0]);
+            System.out.println(jsons[1]);
+            System.out.println(jsons[2]);
         });
     }
 
