@@ -12,11 +12,12 @@ Promises for Java 8 strongly inspired by [ECMAScript 6.0](https://developer.mozi
 
 ## Why would I use it?
 * because it is better suited for writing asynchronous code than Java 8's CompletableFuture
-    * API is much cleaner and easier to understand - just 2 instance method types (_thenXXX_, _catchXXX_) and 4 static companion methods (_all_, _race_, _resolve_, _reject_) 
+    * API is much cleaner and easier to understand - just 2 instance method types (_thenXXX_, _catchXXX_) and 4 static factory methods (_all_, _race_, _resolve_, _reject_) 
     * exceptions are properly caught and propagated to *catch* callbacks (no fear that some exception will be eaten up)
     * exceptions can be handled similar way as they are normally handled in a blocking code
     * code written using Promises is more readable and easier to understand
 * well tested (100% code covered by unit tests)
+* original API was designed by smart people after endless brainstorming :)
 
 ## When it should not be used?
 * Promises are for one-shot operations, that is, you can execute some method and get a self-contained response (or error), i.e. get some REST resource
