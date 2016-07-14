@@ -18,8 +18,8 @@ Promises for Java 8 strongly inspired by [ECMAScript 6.0](https://developer.mozi
     * code written using Promises is more readable and easier to understand
 
 ## When it should not be used?
-* Promises are for one-shot operations, that is, you can execute some method and get a self-contained response, i.e. get some REST resource
-* When you need to monitor progress of the execution or process a stream of events then use RxJava instead
+* Promises are for one-shot operations, that is, you can execute some method and get a self-contained response (or error), i.e. get some REST resource
+* When you need to monitor progress of the execution or process a stream of events then use something like [RxJava](https://github.com/ReactiveX/RxJava) instead
 
 ## Examples
 
