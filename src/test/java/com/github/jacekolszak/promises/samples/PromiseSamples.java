@@ -26,6 +26,41 @@ public class PromiseSamples {
                 catchVoid(Throwable::printStackTrace);
     }
 
+    @Test
+    public void catchFallback() {
+        getJSON("http://unreliable-url.com").
+                catchReturn(resp -> {
+                    Map<String, String> fallbackJSON = new HashMap<>();
+                    fallbackJSON.put("someProperty", "defaultValue");
+                    fallbackJSON.put("otherURL", "http://default-url.com");
+                    return fallbackJSON;
+                }).
+                thenVoid(System.out::println).
+                catchVoid(Throwable::printStackTrace);
+    }
+
+    @Test
+    public void all() {
+        Promise.all(
+                getJSON("https://fake-url.com/resources/1"),
+                getJSON("https://fake-url.com/resources/2"),
+                getJSON("https://fake-url.com/resources/3")
+        ).thenVoid(resp -> {
+            System.out.println(resp[0]);
+            System.out.println(resp[1]);
+            System.out.println(resp[2]);
+        });
+    }
+
+    @Test
+    public void race() {
+        Promise.race(
+                getJSON("https://fake-url.com/resources/1"),
+                getJSON("https://fake-url.com/resources/2"),
+                getJSON("https://fake-url.com/resources/3")
+        ).thenVoid(System.out::println);
+    }
+
     private Promise<Map<String, String>> getJSON(String url) {
         return new Promise<>(p -> {
             // execute HTTP request asynchronously here (Netty etc.)

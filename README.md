@@ -21,7 +21,7 @@ Promises for Java 8 strongly inspired by [ECMAScript 6.0](https://developer.mozi
 * Promises are for one-shot operations, that is, you can execute some method and get a self-contained response, i.e. get some REST resource
 * When you need to monitor progress of the execution or process a stream of events then use RxJava instead
 
-## Example
+## Examples
 
 ```java
 getJSON("http://github.com").
@@ -34,6 +34,32 @@ getJSON("http://github.com").
         thenPromise(resp -> getJSON(resp.get("otherURL"))).
         thenVoid(System.out::println).
         catchVoid(Throwable::printStackTrace);
+        
+getJSON("http://unreliable-url.com").
+        catchReturn(resp -> {
+            Map<String, String> fallbackJSON = new HashMap<>();
+            fallbackJSON.put("someProperty", "defaultValue");
+            fallbackJSON.put("otherURL", "http://default-url.com");
+            return fallbackJSON;
+        }).
+        thenVoid(System.out::println).
+        catchVoid(Throwable::printStackTrace);
+
+Promise.all(
+        getJSON("https://fake-url.com/resources/1"),
+        getJSON("https://fake-url.com/resources/2"),
+        getJSON("https://fake-url.com/resources/3")
+).thenVoid(resp -> {
+        System.out.println(resp[0]);
+        System.out.println(resp[1]);
+        System.out.println(resp[2]);
+});
+
+Promise.race(
+        getJSON("https://fake-url.com/resources/1"),
+        getJSON("https://fake-url.com/resources/2"),
+        getJSON("https://fake-url.com/resources/3")
+).thenVoid(System.out::println);
 
 private Promise<Map<String, String>> getJSON(String url) {
     return new Promise<>(p -> {
