@@ -38,7 +38,7 @@ public class Promise<RESULT> implements Thenable<RESULT> {
         }
     }
 
-    protected synchronized void doResolvePromise(Thenable<RESULT> promise) {
+    protected void doResolvePromise(Thenable<RESULT> promise) {
         promise.thenVoid(this::doResolve);
         promise.catchVoid(this::doReject);
     }
@@ -55,9 +55,6 @@ public class Promise<RESULT> implements Thenable<RESULT> {
         setException(exception);
     }
 
-    /**
-     * TODO Does this method should be thread safe?
-     */
     @Override
     public synchronized <NEW_RESULT> Promise<NEW_RESULT> then(CheckedFunction<RESULT, NEW_RESULT> then) {
         SuccessPromise<RESULT, NEW_RESULT> next = new SuccessPromise<>(then);
@@ -66,9 +63,6 @@ public class Promise<RESULT> implements Thenable<RESULT> {
         return (Promise<NEW_RESULT>) next;
     }
 
-    /**
-     * TODO Does this method should be thread safe?
-     */
     @Override
     public synchronized <NEW_RESULT> Promise<NEW_RESULT> catchReturn(CheckedFunction<Throwable, NEW_RESULT> caught) {
         ErrorPromise next = new ErrorPromise<>(caught);

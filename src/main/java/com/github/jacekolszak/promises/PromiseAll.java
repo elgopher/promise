@@ -7,9 +7,9 @@ class PromiseAll {
 
     private final PromiseCallbacks<Object[]> promiseCallbacks;
 
-    private int count;
+    private final int count;
 
-    private ConcurrentMap<Integer, Object> responses = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Integer, Object> responses = new ConcurrentHashMap<>();
 
     public PromiseAll(Object[] values, PromiseCallbacks<Object[]> promiseCallbacks) {
         this.promiseCallbacks = promiseCallbacks;
