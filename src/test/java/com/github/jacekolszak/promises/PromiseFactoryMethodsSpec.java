@@ -2,41 +2,35 @@ package com.github.jacekolszak.promises;
 
 import static org.junit.Assert.*;
 
-import org.junit.Before;
 import org.junit.Test;
 
 public class PromiseFactoryMethodsSpec {
 
-    private Object returnedObject;
-
-    @Before
-    public void setup() {
-        this.returnedObject = null;
-    }
+    private Object resolvedValue;
 
     @Test
     public void resolveShouldReturnValueImmediately() {
         String value = "OK";
-        Promise.resolve(value).thenVoid(s -> returnedObject = s);
+        Promise.resolve(value).thenVoid(s -> resolvedValue = s);
 
-        assertEquals(value, returnedObject);
+        assertEquals(value, resolvedValue);
     }
 
     @Test
     public void rejectShouldReturnExceptionImmediately() {
         Throwable e = new Exception();
-        Promise.reject(e).catchVoid(t -> returnedObject = t);
+        Promise.reject(e).catchVoid(t -> resolvedValue = t);
 
-        assertEquals(e, returnedObject);
+        assertEquals(e, resolvedValue);
     }
 
     @Test
     public void resolveWithPromiseParameterShouldReturnValueFromThisPromise() {
         String nestedValue = "OK";
         Promise<String> nestedPromise = new Promise<>(p -> p.resolve(nestedValue));
-        Promise.resolve(nestedPromise).then(s -> returnedObject = s);
+        Promise.resolve(nestedPromise).then(s -> resolvedValue = s);
 
-        assertEquals(nestedValue, returnedObject);
+        assertEquals(nestedValue, resolvedValue);
     }
 
 }

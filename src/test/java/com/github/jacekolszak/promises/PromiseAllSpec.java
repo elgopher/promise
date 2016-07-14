@@ -6,32 +6,32 @@ import org.junit.Test;
 
 public class PromiseAllSpec {
 
-    private Object[] returnedArray;
-    private Throwable returnedException;
+    private Object[] resolvedArray;
+    private Throwable caughtException;
 
     @Test
     public void shouldResolveAllPassedArguments() {
         Promise.all(Promise.resolve(1), new Promise<>(p -> p.resolve(2)), 3).
-                then(arr -> returnedArray = arr);
+                then(arr -> resolvedArray = arr);
 
-        assertArrayEquals(new Object[] { 1, 2, 3 }, returnedArray);
+        assertArrayEquals(new Object[] { 1, 2, 3 }, resolvedArray);
     }
 
     @Test
     public void shouldRejectWhenOneOfTheArgumentsWasRejected() {
         Throwable exception = new Exception();
         Promise.all(Promise.resolve(1), new Promise<>(p -> p.reject(exception)), 3).
-                catchVoid(e -> returnedException = e);
+                catchVoid(e -> caughtException = e);
 
-        assertEquals(exception, returnedException);
+        assertEquals(exception, caughtException);
     }
 
     @Test
     public void shouldResolveNestedPromise() {
         Promise.all(new Promise<>(p -> p.resolve(new Promise<>(p2 -> p2.resolve(1))))).
-                then(arr -> returnedArray = arr);
+                then(arr -> resolvedArray = arr);
 
-        assertArrayEquals(new Object[] { 1 }, returnedArray);
+        assertArrayEquals(new Object[] { 1 }, resolvedArray);
     }
 
 

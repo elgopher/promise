@@ -5,40 +5,34 @@ import static org.junit.Assert.*;
 import java.util.BitSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.Before;
 import org.junit.Test;
 
 public class PromiseSpec {
 
-    private Object returnedValue;
-
-    @Before
-    public void setup() {
-        returnedValue = null;
-    }
+    private Object resolvedValue;
 
     @Test
     public void resolvedPromiseShouldSendValueToThenBlock() {
-        new Promise<>(p -> p.resolve("OK")).then(val -> returnedValue = val);
+        new Promise<>(p -> p.resolve("OK")).then(val -> resolvedValue = val);
 
-        assertEquals("OK", returnedValue);
+        assertEquals("OK", resolvedValue);
     }
 
     @Test
     public void rejectedPromiseShouldSendExceptionToCatchBlock() {
         Exception exception = new Exception();
-        new Promise<>(p -> p.reject(exception)).catchVoid(t -> returnedValue = t);
+        new Promise<>(p -> p.reject(exception)).catchVoid(t -> resolvedValue = t);
 
-        assertSame(exception, returnedValue);
+        assertSame(exception, resolvedValue);
     }
 
     @Test
     public void newPromisePassedToResolveShouldBeBoundedToOriginalPromise() {
         Promise<String> nestedPromise = new Promise<>(nested -> nested.resolve("OK"));
         new Promise<>(p -> p.resolve(nestedPromise)).
-                then(s -> returnedValue = s);
+                then(s -> resolvedValue = s);
 
-        assertEquals("OK", returnedValue);
+        assertEquals("OK", resolvedValue);
     }
 
     @Test
@@ -46,9 +40,9 @@ public class PromiseSpec {
         new Promise<>(p -> {
             p.resolve(1);
             p.resolve(2);
-        }).then(val -> returnedValue = val);
+        }).then(val -> resolvedValue = val);
 
-        assertEquals(1, returnedValue);
+        assertEquals(1, resolvedValue);
     }
 
     @Test
@@ -56,9 +50,9 @@ public class PromiseSpec {
         new Promise<>(p -> {
             p.reject(new Exception("1"));
             p.reject(new Exception("2"));
-        }).catchVoid(val -> returnedValue = val.getMessage());
+        }).catchVoid(val -> resolvedValue = val.getMessage());
 
-        assertEquals("1", returnedValue);
+        assertEquals("1", resolvedValue);
     }
 
     @Test
@@ -90,9 +84,9 @@ public class PromiseSpec {
         Exception e = new Exception();
         new Promise<>(p -> {
             throw e;
-        }).catchVoid(t -> returnedValue = t);
+        }).catchVoid(t -> resolvedValue = t);
 
-        assertEquals(e, returnedValue);
+        assertEquals(e, resolvedValue);
     }
 
     @Test
@@ -102,9 +96,9 @@ public class PromiseSpec {
                 then(s -> {
                     throw e;
                 }).
-                catchVoid(t -> returnedValue = t);
+                catchVoid(t -> resolvedValue = t);
 
-        assertEquals(e, returnedValue);
+        assertEquals(e, resolvedValue);
     }
 
     @Test
@@ -117,18 +111,18 @@ public class PromiseSpec {
                 catchVoid(t -> {
                     throw t;
                 }).
-                catchVoid(t -> this.returnedValue = t);
+                catchVoid(t -> this.resolvedValue = t);
 
-        assertEquals(e, returnedValue);
+        assertEquals(e, resolvedValue);
     }
 
     @Test
     public void promiseReturnedByThenShouldCallNextThenInTheOuterChain() {
         new Promise<>(p -> p.resolve("OUTER")).
                 thenPromise(s -> new Promise<>(p -> p.resolve("NESTED"))).
-                then(n -> returnedValue = n);
+                then(n -> resolvedValue = n);
 
-        assertEquals("NESTED", returnedValue);
+        assertEquals("NESTED", resolvedValue);
     }
 
     @Test
@@ -136,9 +130,9 @@ public class PromiseSpec {
         Exception nested = new Exception();
         new Promise<>(p -> p.resolve("OUTER")).
                 thenPromise(s -> new Promise<>(p -> p.reject(nested))).
-                catchReturn(t -> returnedValue = t);
+                catchReturn(t -> resolvedValue = t);
 
-        assertEquals(nested, returnedValue);
+        assertEquals(nested, resolvedValue);
     }
 
     @Test
@@ -146,9 +140,9 @@ public class PromiseSpec {
         Exception e = new Exception();
         new Promise<>(p -> p.reject(e)).
                 catchReturn(t -> "OK").
-                then(s -> returnedValue = s);
+                then(s -> resolvedValue = s);
 
-        assertEquals("OK", returnedValue);
+        assertEquals("OK", resolvedValue);
     }
 
     @Test
@@ -178,13 +172,14 @@ public class PromiseSpec {
     public void thenCanBeAddedAfterPromiseWasResolvedAndNextPromiseWasExecuted() {
         // given
         Promise<String> promise = new Promise<>(p -> p.resolve("OK"));
-        promise.thenVoid(s -> {});
+        promise.thenVoid(s -> {
+        });
 
         // when
-        promise.then(s ->  returnedValue = s);
+        promise.then(s -> resolvedValue = s);
 
         // then
-        assertEquals("OK", returnedValue);
+        assertEquals("OK", resolvedValue);
     }
 
     @Test
