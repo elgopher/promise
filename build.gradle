@@ -1,5 +1,5 @@
 apply plugin: 'java'
-version = '0.6'
+version = '0.7'
 
 compileJava {
     sourceCompatibility = '1.8'
