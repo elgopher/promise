@@ -53,3 +53,10 @@ dependencies {
     compile  "com.github.jacekolszak:promises:0.5"
 }
 ```
+
+## Project goals
+* Make API looking and behaving exactly the same as ECMAScript 6.0 Promises
+* Use all bleeding edge features of Java 8
+* API should allow to write code which is concise and easy to reason about 
+* API could be used with any other libraries and frameworks which executes code asynchronously (i.e. Netty)
+* Promises created using API should be thread safe
