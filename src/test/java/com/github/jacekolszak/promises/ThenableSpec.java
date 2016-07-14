@@ -7,6 +7,7 @@ import org.junit.Test;
 public class ThenableSpec {
 
     private Object resolvedValue;
+
     private Throwable rejectedException;
 
     @Test

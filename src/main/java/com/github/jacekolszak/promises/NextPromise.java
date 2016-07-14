@@ -1,6 +1,6 @@
 package com.github.jacekolszak.promises;
 
-public class NextPromise {
+class NextPromise {
 
     private final Promise promise;
 

@@ -11,8 +11,8 @@ class SuccessPromise<IN, OUT> extends Promise<IN> {
     @Override
     synchronized void doResolve(IN in) {
         try {
-            if (in instanceof Promise) {
-                doResolvePromise((Promise<IN>) in);
+            if (in instanceof Thenable) {
+                doResolvePromise((Thenable<IN>) in);
             } else {
                 OUT out = this.thenFunction.apply(in);
                 setResult(out);
