@@ -74,7 +74,7 @@ public void race() {
 
 private Promise<Map<String, String>> getJSON(String url) {
     return new Promise<>(p -> {
-        // execute HTTP request asynchronously here (Netty etc.)
+        // execute HTTP request asynchronously here (some Netty based client etc.)
         Map<String, String> json = new HashMap<>();
         json.put("someProperty", "value");
         json.put("otherURL", "http://google.com");
@@ -109,5 +109,5 @@ dependencies {
 * Make API looking and behaving exactly the same as ECMAScript 6.0 Promises
 * Use all bleeding edge features of Java 8
 * API should allow to write code which is concise and easy to reason about 
-* API could be used with any other libraries and frameworks which executes code asynchronously (i.e. Netty)
+* API could be used with any other libraries and frameworks which executes code asynchronously (i.e. [Netty](https://github.com/netty/netty))
 * Promises created using API have to be thread safe

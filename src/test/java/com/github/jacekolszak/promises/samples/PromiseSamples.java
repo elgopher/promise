@@ -63,7 +63,7 @@ public class PromiseSamples {
 
     private Promise<Map<String, String>> getJSON(String url) {
         return new Promise<>(p -> {
-            // execute HTTP request asynchronously here (Netty etc.)
+            // execute HTTP request asynchronously here (some Netty based client etc.)
             Map<String, String> json = new HashMap<>();
             json.put("someProperty", "value");
             json.put("otherURL", "http://google.com");
