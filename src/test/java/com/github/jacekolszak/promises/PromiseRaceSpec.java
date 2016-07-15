@@ -15,14 +15,14 @@ public class PromiseRaceSpec {
     private final CountDownLatch latch = new CountDownLatch(1);
 
     @Test
-    public void shouldResolveReturningFirstResolvedValue() {
+    public void shouldResolveReturningFirstResolvedValue() throws InterruptedException {
         // given
         Promise<Object> p1 = new Promise<>(p -> new Thread(() -> {
             p.resolve("first");
             latch.countDown();
         }).start());
-
         Promise<Object> p2 = resolvedPromise(latch);
+        latch.await();
 
         // when
         Promise.race(p1, p2).then(r -> resolvedValue = r);
@@ -43,7 +43,7 @@ public class PromiseRaceSpec {
     }
 
     @Test
-    public void shouldRejectReturningFirstException() {
+    public void shouldRejectReturningFirstException() throws InterruptedException {
         // given
         Throwable firstException = new Exception();
         Promise<Object> p1 = rejectedPromise(latch, firstException);
@@ -56,6 +56,7 @@ public class PromiseRaceSpec {
                 fail(e.getMessage());
             }
         }).start());
+        latch.await();
 
         // when
         Promise.race(p1, p2).catchVoid(e -> rejectedException = e);
@@ -72,11 +73,12 @@ public class PromiseRaceSpec {
     }
 
     @Test
-    public void shouldRejectWhenFirstPromiseIsRejectedEvenIfSecondPromiseIsResolved() {
+    public void shouldRejectWhenFirstPromiseIsRejectedEvenIfSecondPromiseIsResolved() throws InterruptedException {
         // given
         Throwable exception = new Exception();
         Promise<Object> p1 = rejectedPromise(latch, exception);
         Promise<Object> p2 = resolvedPromise(latch);
+        latch.await();
 
         // when
         Promise.race(p1, p2).catchVoid(e -> rejectedException = e);

@@ -8,17 +8,19 @@ compileJava {
 
 repositories {
     mavenCentral()
-    jcenter()
+    maven {
+        url "http://dl.bintray.com/jacekolszak/maven"
+    }
 }
 
 dependencies {
-    testCompile "junit:junit:4.12"
+    testCompile "junit:junit:4.11"
+    testCompile "thread-jiggler:thread-jiggler-test:0.1"
 }
 
 jar {
     manifest {
-        attributes 'Implementation-Title': 'Java 8 Promises API',
-                   'Implementation-Version': version
+        attributes 'Implementation-Title': 'Promises for Java 8', 'Implementation-Version': version
     }
 }
 
