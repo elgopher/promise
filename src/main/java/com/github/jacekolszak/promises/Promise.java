@@ -12,6 +12,13 @@ import java.util.List;
  * <li>asynchronous code can be written by chaining promises together
  * <li>exception thrown by a promise is propagated through promise chains
  * </ul>
+ * <p>
+ * It has zero to many "then" callbacks and zero to many "catch" callbacks. Callbacks are executed in order they were
+ * registered. 
+ * <p>
+ * Promise is thread safe - adding new callbacks is thread safe. Resolving/rejecting a Promise is thread safe.
+ * <p>
+ * Promise allows to resolve or reject multiple times but subsequent executions don't have any effect.
  */
 public class Promise<RESULT> implements Thenable<RESULT> {
 
