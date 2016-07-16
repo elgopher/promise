@@ -38,10 +38,10 @@ public class TimersSpec {
     }
 
     @Test
-    public void shouldTimeoutUsingExecutorService() throws InterruptedException {
+    public void shouldTimeoutUsingExecutor() throws InterruptedException {
         // given
-        ExecutorServiceSpy executorService = new ExecutorServiceSpy();
-        timeout(neverEndingPromise(), 10, executorService).
+        ExecutorSpy executor = new ExecutorSpy();
+        timeout(neverEndingPromise(), 10, executor).
                 catchVoid(e -> {
                     latch.countDown();
                 });
@@ -50,7 +50,7 @@ public class TimersSpec {
         latch.await(50, TimeUnit.MILLISECONDS);
 
         // then
-        assertEquals(1, executorService.numberOfSubmittedTasks.get());
+        assertEquals(1, executor.numberOfSubmittedTasks.get());
     }
 
     private Promise<Object> neverEndingPromise() {
@@ -69,7 +69,7 @@ public class TimersSpec {
     }
 
     @Test
-    public void passingNullExecutorServiceShouldUseDefaultOne() throws InterruptedException {
+    public void passingNullExecutorShouldUseDefaultOne() throws InterruptedException {
         // given
         timeout(neverEndingPromise(), 10, null).
                 catchVoid(e -> {
@@ -100,16 +100,16 @@ public class TimersSpec {
     }
 
     @Test
-    public void delayShouldRunThenCallbackWithCustomExecutorService() throws InterruptedException {
+    public void delayShouldRunThenCallbackWithCustomExecutor() throws InterruptedException {
         // given
-        ExecutorServiceSpy executorService = new ExecutorServiceSpy();
-        delay(10, executorService).thenVoid(v -> latch.countDown());
+        ExecutorSpy executor = new ExecutorSpy();
+        delay(10, executor).thenVoid(v -> latch.countDown());
 
         // when
         latch.await(50, TimeUnit.MILLISECONDS);
 
         // then
-        assertEquals(1, executorService.numberOfSubmittedTasks.get());
+        assertEquals(1, executor.numberOfSubmittedTasks.get());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -118,7 +118,7 @@ public class TimersSpec {
     }
 
     @Test
-    public void passingNullExecutorServiceToDelayShouldUseDefaultOne() throws InterruptedException {
+    public void passingNullExecutorToDelayShouldUseDefaultOne() throws InterruptedException {
         // given
         delay(10, null).thenVoid(v -> {
             resolved = true;
@@ -132,19 +132,18 @@ public class TimersSpec {
         assertTrue(resolved);
     }
 
-    class ExecutorServiceSpy extends ThreadPoolExecutor {
+    class ExecutorSpy extends ThreadPoolExecutor {
 
         final AtomicInteger numberOfSubmittedTasks = new AtomicInteger(0);
 
-        ExecutorServiceSpy() {
+        ExecutorSpy() {
             super(1, 1, 1, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1));
         }
 
         @Override
-        public Future<?> submit(Runnable task) {
-            Future<?> future = super.submit(task);
+        public void execute(Runnable command) {
+            super.execute(command);
             numberOfSubmittedTasks.incrementAndGet();
-            return future;
         }
 
     }
