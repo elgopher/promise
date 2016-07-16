@@ -21,6 +21,12 @@ public class Timers {
         }, timeMillis));
     }
 
+    /**
+     * Overloaded @{link Timers#timeout} method using passed {@link ExecutorService} instead of default one.
+     * This method can be used to control the size and behaviour of the thread pool.
+     *
+     * @see Timers#timeout(Thenable, long)
+     */
     public static <RESULT> Thenable<RESULT> timeout(Thenable<RESULT> promise, long timeMillis,
                                                     ExecutorService executorService) {
         return (Thenable<RESULT>) Promise.race(
@@ -31,6 +37,16 @@ public class Timers {
         );
     }
 
+    /**
+     * Create a Promise which will be rejected after specific timeout or resolved when promise passed as an argument
+     * is resolved. "Catch" callbacks of created Promise will be executed in a thread pool with the size of available
+     * processors.
+     *
+     * @param promise    When promise resolves the created Timeout promise also resolves. If promise rejects before
+     *                   timeout
+     *                   then Timeout promise also rejects.
+     * @param timeMillis Timeout in milliseconds
+     */
     public static <RESULT> Thenable<RESULT> timeout(Thenable<RESULT> promise, long timeMillis) {
         return timeout(promise, timeMillis, executorService);
     }

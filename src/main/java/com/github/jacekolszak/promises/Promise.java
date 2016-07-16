@@ -3,6 +3,16 @@ package com.github.jacekolszak.promises;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Promise is:
+ * <ul>
+ * <li>a <b>placeholder</b> for a value (or an exception) returned from an <b>asynchronous</b> operation
+ * <li>internally a promise has three states: pending, resolved, rejected
+ * <li>after a promise is resolved or rejected its state and value can never be changed
+ * <li>asynchronous code can be written by chaining promises together
+ * <li>exception thrown by a promise is propagated through promise chains
+ * </ul>
+ */
 public class Promise<RESULT> implements Thenable<RESULT> {
 
     private final List<NextPromise> next = new ArrayList<>();
@@ -11,6 +21,13 @@ public class Promise<RESULT> implements Thenable<RESULT> {
 
     private PromiseValue value;
 
+    /**
+     * Construct a new Promise with executor code. Executor should either resolve or reject the promise using
+     * the supplied PromiseCallbacks object. Executor can reject a promise also by throwing an exception.
+     *
+     * @param executor This piece of code is executed immediately. When executor throws an exception then
+     *                 the exception is caught and promise is rejected using this exception.
+     */
     public Promise(CheckedConsumer<PromiseCallbacks<RESULT>> executor) {
         try {
             executor.accept(new PromiseCallbacks<>(this));
@@ -104,24 +121,44 @@ public class Promise<RESULT> implements Thenable<RESULT> {
                 ", value=" + value + ")";
     }
 
-    public static <V> Promise<V> resolve(V value) {
-        return new Promise<>(p -> p.resolve(value));
+    /**
+     * Create a Promise that resolves passed object immediately.
+     *
+     * @param promiseOrValue If it is a Promise then resolve the Promise first.
+     */
+    public static <V> Promise<V> resolve(V promiseOrValue) {
+        return new Promise<>(p -> p.resolve(promiseOrValue));
     }
 
+    /**
+     * Special case of {@link Promise#resolve(Object)} method which resolves passed Promise. Method created to
+     * avoid casting.
+     */
     public static <T> Promise<T> resolve(Thenable<T> promise) {
         return new Promise<>(p -> p.resolve((T) promise));
     }
 
+    /**
+     * Create a Promise that rejects with passed exception immediately.
+     */
     public static <R extends Throwable> Promise<R> reject(R exception) {
         return new Promise<>(p -> p.reject(exception));
     }
 
-    public static Promise<Object[]> all(Object... values) {
-        return new Promise<>(p -> new PromiseAll(values, p));
+    /**
+     * Create a Promise that resolves when all of the passed promises have resolved, or rejects with the reason of the
+     * first passed promise that rejects.
+     */
+    public static Promise<Object[]> all(Object... promisesOrValues) {
+        return new Promise<>(p -> new PromiseAll(promisesOrValues, p));
     }
 
-    public static Promise<Object> race(Object... values) {
-        return new Promise<>(p -> new PromiseRace(values, p));
+    /**
+     * Create a Promise that resolves or rejects as soon as one of the promises resolves or rejects, with the value or
+     * reason from that promise.
+     */
+    public static Promise<Object> race(Object... promisesOrValues) {
+        return new Promise<>(p -> new PromiseRace(promisesOrValues, p));
     }
 
 }

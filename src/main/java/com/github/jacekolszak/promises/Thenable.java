@@ -1,5 +1,10 @@
 package com.github.jacekolszak.promises;
 
+/**
+ * Thenable is a Promise object interface.
+ *
+ * @param <RESULT> Type of resolving result
+ */
 public interface Thenable<RESULT> {
 
     /**
