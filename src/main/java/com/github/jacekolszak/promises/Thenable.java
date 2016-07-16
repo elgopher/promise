@@ -12,9 +12,10 @@ public interface Thenable<RESULT> {
     <NEW_RESULT> Thenable<NEW_RESULT> then(CheckedFunction<RESULT, NEW_RESULT> callback);
 
     /**
-     * Run the callback when Promise is resolved (on success). This is a special case of Thenable#then(CheckedFunction)
-     * method for callbacks returning Promises. Please note that this method is just a syntactic sugar, created to
-     * avoid casting Promises in your code. The same result could be achieved using Thenable#then(CheckedFunction)
+     * Run the callback when Promise is resolved (on success). This is a special case of
+     * {@link Thenable#then(CheckedFunction)} method for callbacks returning Promises. Please note that this method
+     * is just a syntactic sugar, created to avoid casting Promises in your code. The same result could be achieved
+     * using {@link Thenable#then(CheckedFunction)}
      *
      * @see Thenable#then(CheckedFunction)
      */
@@ -23,10 +24,10 @@ public interface Thenable<RESULT> {
     }
 
     /**
-     * Run the callback when Promise is resolved (on success). This is a special case of Thenable#then(CheckedFunction)
-     * method for callbacks that don't return anything. Please note that this method is just a syntactic sugar,
-     * created to avoid putting return statements in your code. The same result could be achieved using
-     * Thenable#then(CheckedFunction) and returning a null value.
+     * Run the callback when Promise is resolved (on success). This is a special case of
+     * {@link Thenable#then(CheckedFunction)} method for callbacks that don't return anything. Please note that this
+     * method is just a syntactic sugar, created to avoid putting return statements in your code. The same result could
+     * be achieved using {@link Thenable#then(CheckedFunction)} and returning a null value.
      *
      * @see Thenable#then(CheckedFunction)
      */
@@ -49,9 +50,9 @@ public interface Thenable<RESULT> {
 
     /**
      * Run the callback when Promise is rejected (on error). This is a special case of
-     * Thenable#catchReturn(CheckedFunction) method for callbacks that don't return anything. Please note that this
-     * method is just a syntactic sugar, created to avoid putting return statements in your code.
-     * The same result could be achieved using Thenable#catchReturn(CheckedFunction) and returning a null value.
+     * {@link Thenable#catchReturn(CheckedFunction)} method for callbacks that don't return anything. Please note that
+     * this method is just a syntactic sugar, created to avoid putting return statements in your code.
+     * The same result could be achieved using {@link Thenable#catchReturn(CheckedFunction)} and returning a null value.
      *
      * @see Thenable#catchReturn(CheckedFunction)
      */
