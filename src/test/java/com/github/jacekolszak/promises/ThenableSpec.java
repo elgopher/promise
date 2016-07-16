@@ -20,9 +20,9 @@ public class ThenableSpec {
     class ResolvingThenable implements Thenable<String> {
 
         @Override
-        public ResolvingThenable then(CheckedFunction then) {
+        public ResolvingThenable then(CheckedFunction callback) {
             try {
-                then.apply("OK");
+                callback.apply("OK");
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
@@ -30,7 +30,7 @@ public class ThenableSpec {
         }
 
         @Override
-        public ResolvingThenable catchReturn(CheckedFunction then) {
+        public ResolvingThenable catchReturn(CheckedFunction callback) {
             return this;
         }
     }
@@ -48,14 +48,14 @@ public class ThenableSpec {
         public final Throwable exception = new Exception();
 
         @Override
-        public RejectingThenable then(CheckedFunction then) {
+        public RejectingThenable then(CheckedFunction callback) {
             return this;
         }
 
         @Override
-        public RejectingThenable catchReturn(CheckedFunction then) {
+        public RejectingThenable catchReturn(CheckedFunction callback) {
             try {
-                then.apply(exception);
+                callback.apply(exception);
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }

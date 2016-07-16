@@ -56,16 +56,16 @@ public class Promise<RESULT> implements Thenable<RESULT> {
     }
 
     @Override
-    public synchronized <NEW_RESULT> Promise<NEW_RESULT> then(CheckedFunction<RESULT, NEW_RESULT> then) {
-        SuccessPromise<RESULT, NEW_RESULT> next = new SuccessPromise<>(then);
+    public synchronized <NEW_RESULT> Promise<NEW_RESULT> then(CheckedFunction<RESULT, NEW_RESULT> callback) {
+        SuccessPromise<RESULT, NEW_RESULT> next = new SuccessPromise<>(callback);
         addNext(next);
         fireIfNecessarily();
         return (Promise<NEW_RESULT>) next;
     }
 
     @Override
-    public synchronized <NEW_RESULT> Promise<NEW_RESULT> catchReturn(CheckedFunction<Throwable, NEW_RESULT> caught) {
-        ErrorPromise next = new ErrorPromise<>(caught);
+    public synchronized <NEW_RESULT> Promise<NEW_RESULT> catchReturn(CheckedFunction<Throwable, NEW_RESULT> callback) {
+        ErrorPromise next = new ErrorPromise<>(callback);
         addNext(next);
         fireIfNecessarily();
         return next;
