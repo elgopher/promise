@@ -15,7 +15,25 @@ public class Timers {
     private static ExecutorService defaultExecutorService = Executors.newFixedThreadPool(
             getRuntime().availableProcessors());
 
-    private static Promise<Void> delay(long delay, ExecutorService executor) {
+    /**
+     * Create a Promise which resolves after specified delay. "Then" callback of created Promise will be executed
+     * in a thread pool with the size of available processors.
+     *
+     * @param delay Time in millis
+     */
+    public static Promise<Void> delay(long delay) {
+        return delay(delay, defaultExecutorService);
+    }
+
+    /**
+     * Overloaded {@link Timers#delay(long)} method using passed {@link ExecutorService} instead of default one.
+     * This method can be used to control the size and behaviour of the thread pool.
+     *
+     * @see Timers#delay(long)
+     */
+    public static Promise<Void> delay(long delay, ExecutorService executorService) {
+        if (delay < 0) throw new IllegalArgumentException("Delay cannot be negative");
+        ExecutorService executor = executorService != null ? executorService : Timers.defaultExecutorService;
         return new Promise<>(p -> timer.schedule(new TimerTask() {
             public void run() {
                 executor.submit(() -> p.resolve(null));
@@ -24,7 +42,8 @@ public class Timers {
     }
 
     /**
-     * Overloaded @{link Timers#timeout} method using passed {@link ExecutorService} instead of default one.
+     * Overloaded {@link Timers#timeout(Thenable, long)} method using passed
+     * {@link ExecutorService} instead of default one.
      * This method can be used to control the size and behaviour of the thread pool.
      *
      * @see Timers#timeout(Thenable, long)
@@ -32,11 +51,9 @@ public class Timers {
     public static <RESULT> Thenable<RESULT> timeout(Thenable<RESULT> promise, long delay,
                                                     ExecutorService executorService) {
         if (promise == null) throw new IllegalArgumentException("Promise cannot be null");
-        if (delay < 0) throw new IllegalArgumentException("Delay cannot be negative");
-        ExecutorService executor = executorService != null ? executorService : Timers.defaultExecutorService;
         return (Thenable<RESULT>) Promise.race(
                 promise,
-                delay(delay, executor).thenVoid(v -> {
+                delay(delay, executorService).thenVoid(v -> {
                     throw new TimeoutException("Timeout waiting for promise ");
                 })
         );
@@ -44,7 +61,7 @@ public class Timers {
 
     /**
      * Create a Promise which will be rejected after specific timeout or resolved when promise passed as an argument
-     * is resolved. "Catch" callbacks of created Promise will be executed in a thread pool with the size of available
+     * is resolved. "Catch" callback of created Promise will be executed in a thread pool with the size of available
      * processors.
      *
      * @param promise When promise resolves the created Timeout promise also resolves. If promise rejects before

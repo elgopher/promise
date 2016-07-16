@@ -3,15 +3,19 @@ package com.github.jacekolszak.promises;
 import static com.github.jacekolszak.promises.Timers.*;
 import static junit.framework.TestCase.*;
 
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 
 public class TimersSpec {
+
+    private boolean resolved;
 
     private Throwable exceptionCaught;
 
@@ -36,10 +40,9 @@ public class TimersSpec {
     @Test
     public void shouldTimeoutUsingExecutorService() throws InterruptedException {
         // given
-        ExecutorService executorService = Executors.newFixedThreadPool(1);
+        ExecutorServiceSpy executorService = new ExecutorServiceSpy();
         timeout(neverEndingPromise(), 10, executorService).
                 catchVoid(e -> {
-                    exceptionCaught = e;
                     latch.countDown();
                 });
 
@@ -47,7 +50,7 @@ public class TimersSpec {
         latch.await(50, TimeUnit.MILLISECONDS);
 
         // then
-        assertTrue(exceptionCaught instanceof TimeoutException);
+        assertEquals(1, executorService.numberOfSubmittedTasks.get());
     }
 
     private Promise<Object> neverEndingPromise() {
@@ -81,4 +84,68 @@ public class TimersSpec {
         assertTrue(exceptionCaught instanceof TimeoutException);
     }
 
+    @Test
+    public void delayShouldRunThenCallbackAfterSpecifiedAmountOfTime() throws InterruptedException {
+        // given
+        delay(10).thenVoid(v -> {
+            resolved = true;
+            latch.countDown();
+        });
+
+        // when
+        latch.await(50, TimeUnit.MILLISECONDS);
+
+        // then
+        assertTrue(resolved);
+    }
+
+    @Test
+    public void delayShouldRunThenCallbackWithCustomExecutorService() throws InterruptedException {
+        // given
+        ExecutorServiceSpy executorService = new ExecutorServiceSpy();
+        delay(10, executorService).thenVoid(v -> latch.countDown());
+
+        // when
+        latch.await(50, TimeUnit.MILLISECONDS);
+
+        // then
+        assertEquals(1, executorService.numberOfSubmittedTasks.get());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void negativeDelayShouldThrowIllegalArgumentException() {
+        delay(-10);
+    }
+
+    @Test
+    public void passingNullExecutorServiceToDelayShouldUseDefaultOne() throws InterruptedException {
+        // given
+        delay(10, null).thenVoid(v -> {
+            resolved = true;
+            latch.countDown();
+        });
+
+        // when
+        latch.await(50, TimeUnit.MILLISECONDS);
+
+        // then
+        assertTrue(resolved);
+    }
+
+    class ExecutorServiceSpy extends ThreadPoolExecutor {
+
+        final AtomicInteger numberOfSubmittedTasks = new AtomicInteger(0);
+
+        ExecutorServiceSpy() {
+            super(1, 1, 1, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1));
+        }
+
+        @Override
+        public Future<?> submit(Runnable task) {
+            Future<?> future = super.submit(task);
+            numberOfSubmittedTasks.incrementAndGet();
+            return future;
+        }
+
+    }
 }
