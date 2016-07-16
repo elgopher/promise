@@ -65,9 +65,11 @@ public class PromiseSamples {
 
     @Test
     public void timers() {
-        timeout(getJSON("http://github.com"), 1000).
+        timeout(getJSON("http://github.com"), 100).
                 thenVoid(System.out::println).
                 catchVoid(Throwable::printStackTrace);
+
+        delay(100).then(v -> getJSON("http://github.com"));
     }
 
     private Promise<Map<String, String>> getJSON(String url) {

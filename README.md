@@ -77,6 +77,8 @@ public void timers() {
     timeout(getJSON("http://github.com"), 1000).
             thenVoid(System.out::println).
             catchVoid(Throwable::printStackTrace);
+            
+    delay(100).then(v -> getJSON("http://github.com"));
 }
 
 
