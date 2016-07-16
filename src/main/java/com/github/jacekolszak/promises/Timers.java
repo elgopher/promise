@@ -8,6 +8,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
+/**
+ * Helper methods not related to Promises API, but still useful in many situations.
+ */
 public class Timers {
 
     private static Timer timer = new Timer("Promise Timeout Timer");
