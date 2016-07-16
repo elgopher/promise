@@ -1,5 +1,7 @@
 package com.github.jacekolszak.promises.samples;
 
+import static com.github.jacekolszak.promises.Timers.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,6 +61,13 @@ public class PromiseSamples {
                 getJSON("https://fake-url.com/resources/2"),
                 getJSON("https://fake-url.com/resources/3")
         ).thenVoid(System.out::println);
+    }
+
+    @Test
+    public void timers() {
+        timeout(getJSON("http://github.com"), 1000).
+                thenVoid(System.out::println).
+                catchVoid(Throwable::printStackTrace);
     }
 
     private Promise<Map<String, String>> getJSON(String url) {

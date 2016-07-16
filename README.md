@@ -73,6 +73,12 @@ public void race() {
     ).thenVoid(System.out::println);
 }
 
+public void timers() {
+    timeout(getJSON("http://github.com"), 1000).
+            thenVoid(System.out::println).
+            catchVoid(Throwable::printStackTrace);
+}
+
 
 private Promise<Map<String, String>> getJSON(String url) {
     return new Promise<>(p -> {
