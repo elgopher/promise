@@ -111,7 +111,7 @@ And use the artifact like this:
 
 ```groovy
 dependencies {
-    compile  "com.github.jacekolszak:promises:0.8"
+    compile  "com.github.jacekolszak:promises:0.9"
 }
 ```
 
