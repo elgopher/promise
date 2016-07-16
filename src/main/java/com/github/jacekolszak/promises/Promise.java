@@ -2,6 +2,8 @@ package com.github.jacekolszak.promises;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 /**
  * Promise is:
@@ -177,6 +179,22 @@ public class Promise<RESULT> implements Thenable<RESULT> {
      */
     public static Promise<Object> race(Object... promisesOrValues) {
         return new Promise<>(p -> new PromiseRace(promisesOrValues, p));
+    }
+
+    /**
+     * Create a Promise from Java 8's CompletableFuture
+     *
+     * @throws IllegalArgumentException When future is null
+     */
+    public static <RESULT> Promise<RESULT> toPromise(CompletionStage<RESULT> future) {
+        if (future == null) throw new IllegalArgumentException("Future cannot be null");
+        return new Promise<>(p -> future.whenComplete((result, exception) -> {
+            if (exception != null) {
+                p.reject(exception);
+            } else {
+                p.resolve(result);
+            }
+        }));
     }
 
 }
