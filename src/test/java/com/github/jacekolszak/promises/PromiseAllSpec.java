@@ -7,6 +7,7 @@ import org.junit.Test;
 public class PromiseAllSpec {
 
     private Object[] resolvedArray;
+
     private Throwable caughtException;
 
     @Test
@@ -14,7 +15,7 @@ public class PromiseAllSpec {
         Promise.all(Promise.resolve(1), new Promise<>(p -> p.resolve(2)), 3).
                 then(arr -> resolvedArray = arr);
 
-        assertArrayEquals(new Object[] { 1, 2, 3 }, resolvedArray);
+        assertArrayEquals(new Object[]{ 1, 2, 3 }, resolvedArray);
     }
 
     @Test
@@ -31,8 +32,23 @@ public class PromiseAllSpec {
         Promise.all(new Promise<>(p -> p.resolve(new Promise<>(p2 -> p2.resolve(1))))).
                 then(arr -> resolvedArray = arr);
 
-        assertArrayEquals(new Object[] { 1 }, resolvedArray);
+        assertArrayEquals(new Object[]{ 1 }, resolvedArray);
     }
 
+    @Test
+    public void shouldRejectPromiseWhenArrayIsNull() {
+        Object[] args = null;
+        Promise.all(args).catchVoid(t -> caughtException = t);
+
+        assertTrue(caughtException instanceof IllegalArgumentException);
+    }
+
+    @Test
+    public void shouldResolvePromiseForEmptyArray() {
+        Object[] args = new Object[0];
+        Promise.all(args).thenVoid(t -> resolvedArray = args);
+
+        assertTrue(resolvedArray.length == 0);
+    }
 
 }

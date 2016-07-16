@@ -55,4 +55,30 @@ public class TimersSpec {
         });
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void nullPromiseShouldThrowIllegalArgumentException() {
+        timeout(null, 10);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void negativeTimeoutShouldThrowIllegalArgumentException() {
+        timeout(neverEndingPromise(), -10);
+    }
+
+    @Test
+    public void passingNullExecutorServiceShouldUseDefaultOne() throws InterruptedException {
+        // given
+        timeout(neverEndingPromise(), 10, null).
+                catchVoid(e -> {
+                    exceptionCaught = e;
+                    latch.countDown();
+                });
+
+        // when
+        latch.await(50, TimeUnit.MILLISECONDS);
+
+        // then
+        assertTrue(exceptionCaught instanceof TimeoutException);
+    }
+
 }

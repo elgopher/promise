@@ -209,4 +209,17 @@ public class PromiseSpec {
         // then
         assertEquals(2, i.get());
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void nullExecutorShouldThrowIllegalArgumentException() {
+        new Promise<>(null);
+    }
+
+    @Test
+    public void nullThenCallbackShouldBeOmitted() {
+        Promise.resolve("OK").then(null).then(val -> this.resolvedValue = val);
+
+        assertEquals("OK", resolvedValue);
+    }
+
 }

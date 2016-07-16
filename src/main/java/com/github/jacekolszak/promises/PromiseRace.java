@@ -5,9 +5,16 @@ class PromiseRace {
     private final PromiseCallbacks<Object> promiseCallbacks;
 
     public PromiseRace(Object[] values, PromiseCallbacks<Object> promiseCallbacks) {
+        if (values == null) {
+            throw new IllegalArgumentException("Null array passed to Promise.race");
+        }
         this.promiseCallbacks = promiseCallbacks;
-        for (Object value : values) {
-            resolve(value);
+        if (values.length == 0) {
+            throw new IllegalArgumentException("Array passed to Promise.race cannot be empty");
+        } else {
+            for (Object value : values) {
+                resolve(value);
+            }
         }
     }
 

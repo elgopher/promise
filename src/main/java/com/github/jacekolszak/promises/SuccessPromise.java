@@ -1,11 +1,13 @@
 package com.github.jacekolszak.promises;
 
+import java.util.Optional;
+
 class SuccessPromise<IN, OUT> extends Promise<IN> {
 
-    private final CheckedFunction<IN, OUT> thenFunction;
+    private final Optional<CheckedFunction<IN, OUT>> thenFunction;
 
     public SuccessPromise(CheckedFunction<IN, OUT> thenFunction) {
-        this.thenFunction = thenFunction;
+        this.thenFunction = Optional.ofNullable(thenFunction);
     }
 
     @Override
@@ -14,7 +16,7 @@ class SuccessPromise<IN, OUT> extends Promise<IN> {
             if (in instanceof Thenable) {
                 doResolvePromise((Thenable<IN>) in);
             } else {
-                OUT out = this.thenFunction.apply(in);
+                OUT out = this.thenFunction.isPresent() ? this.thenFunction.get().apply(in) : (OUT) in;
                 setResult(out);
             }
         } catch (Throwable exception) {

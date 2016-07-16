@@ -14,11 +14,13 @@ import java.util.List;
  * </ul>
  * <p>
  * It has zero to many "then" callbacks and zero to many "catch" callbacks. Callbacks are executed in order they were
- * registered. 
+ * registered.
  * <p>
  * Promise is thread safe - adding new callbacks is thread safe. Resolving/rejecting a Promise is thread safe.
  * <p>
  * Promise allows to resolve or reject multiple times but subsequent executions don't have any effect.
+ * <p>
+ * Each execution of then/catch creates a new Promise object.
  */
 public class Promise<RESULT> implements Thenable<RESULT> {
 
@@ -34,8 +36,10 @@ public class Promise<RESULT> implements Thenable<RESULT> {
      *
      * @param executor This piece of code is executed immediately. When executor throws an exception then
      *                 the exception is caught and promise is rejected using this exception.
+     * @throws IllegalArgumentException When executor is null
      */
     public Promise(CheckedConsumer<PromiseCallbacks<RESULT>> executor) {
+        if (executor == null) throw new IllegalArgumentException("Executor cannot be null");
         try {
             executor.accept(new PromiseCallbacks<>(this));
         } catch (Throwable throwable) {
@@ -155,6 +159,9 @@ public class Promise<RESULT> implements Thenable<RESULT> {
     /**
      * Create a Promise that resolves when all of the passed promises have resolved, or rejects with the reason of the
      * first passed promise that rejects.
+     *
+     * @param promisesOrValues If null then created Promise is rejected.
+     *                         If empty then created Promise is resolved with an empty array.
      */
     public static Promise<Object[]> all(Object... promisesOrValues) {
         return new Promise<>(p -> new PromiseAll(promisesOrValues, p));
@@ -163,6 +170,10 @@ public class Promise<RESULT> implements Thenable<RESULT> {
     /**
      * Create a Promise that resolves or rejects as soon as one of the promises resolves or rejects, with the value or
      * reason from that promise.
+     *
+     * @param promisesOrValues If null then created Promise is rejected.
+     *                         If empty then created Promise is rejected. Please note that this behaviour breaks with
+     *                         ECMAScript 6.0, where race become infinitely pending if an empty array is passed
      */
     public static Promise<Object> race(Object... promisesOrValues) {
         return new Promise<>(p -> new PromiseRace(promisesOrValues, p));

@@ -1,7 +1,7 @@
 package com.github.jacekolszak.promises;
 
 /**
- * Thenable is a Promise object interface.
+ * Thenable is a Promise object interface.P
  *
  * @param <RESULT> Type of resolving result
  */
@@ -13,6 +13,9 @@ public interface Thenable<RESULT> {
      * @param callback Callback executed at most one time even if Promise was resolved multiple times by many
      *                 threads. Value returned by callback is passed to the next Promise in the chain. When callback
      *                 returns a Promise it is first resolved before passing to the next Promise in the chain.
+     *                 <p>
+     *                 If the callback is null then skip execution of it and pass result to the next Promise in the
+     *                 chain.
      */
     <NEW_RESULT> Thenable<NEW_RESULT> then(CheckedFunction<RESULT, NEW_RESULT> callback);
 
@@ -50,6 +53,9 @@ public interface Thenable<RESULT> {
      * @param callback Executed at most one time even if Promise was rejected multiple times by many threads.
      *                 Value returned from callback is passed to the next Promise in the chain. When callback
      *                 returns a Promise it is first resolved before passing to the next Promise in the chain.
+     *                 <p>
+     *                 If the callback is null then skip execution of it and pass exception to the next Promise in the
+     *                 chain.
      */
     <NEW_RESULT> Thenable<NEW_RESULT> catchReturn(CheckedFunction<Throwable, NEW_RESULT> callback);
 

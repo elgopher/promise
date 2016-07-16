@@ -12,10 +12,17 @@ class PromiseAll {
     private final ConcurrentMap<Integer, Object> responses = new ConcurrentHashMap<>();
 
     public PromiseAll(Object[] values, PromiseCallbacks<Object[]> promiseCallbacks) {
+        if (values == null) {
+            throw new IllegalArgumentException("Null array passed to Promise.all");
+        }
         this.promiseCallbacks = promiseCallbacks;
         this.count = values.length;
-        for (int i = 0; i < count; i++) {
-            resolve(i, values[i]);
+        if (count == 0) {
+            promiseCallbacks.resolve(new Object[0]);
+        } else {
+            for (int i = 0; i < count; i++) {
+                resolve(i, values[i]);
+            }
         }
     }
 

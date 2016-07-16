@@ -87,4 +87,20 @@ public class PromiseRaceSpec {
         assertEquals(exception, rejectedException);
     }
 
+    @Test
+    public void shouldRejectPromiseWhenArrayIsNull() {
+        Object[] args = null;
+        Promise.race(args).catchVoid(t -> rejectedException = t);
+
+        assertTrue(rejectedException instanceof IllegalArgumentException);
+    }
+
+    @Test
+    public void shouldRejectPromiseForEmptyArray() {
+        Object[] args = new Object[0];
+        Promise.race(args).catchVoid(t -> rejectedException = t);
+
+        assertTrue(rejectedException instanceof IllegalArgumentException);
+    }
+
 }
