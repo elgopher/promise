@@ -21,9 +21,9 @@ public interface Thenable<RESULT> {
 
     /**
      * Run the callback when Promise is resolved (on success). This is a special case of
-     * {@link Thenable#thenReturn(CheckedFunction)} method for callbacks returning Promises. Please note that this method
-     * is just a syntactic sugar, created to avoid casting Promises in your code. The same result could be achieved
-     * using {@link Thenable#thenReturn(CheckedFunction)}
+     * {@link Thenable#thenReturn(CheckedFunction)} method for callbacks returning Promises. Please note that this
+     * method is just a syntactic sugar, created to avoid casting Promises in your code. The same result could be
+     * achieved using {@link Thenable#thenReturn(CheckedFunction)}
      *
      * @see Thenable#thenReturn(CheckedFunction)
      */
@@ -33,18 +33,21 @@ public interface Thenable<RESULT> {
 
     /**
      * Run the callback when Promise is resolved (on success). This is a special case of
-     * {@link Thenable#thenReturn(CheckedFunction)} method for callbacks that don't return anything. Please note that this
-     * method is just a syntactic sugar, created to avoid putting return statements in your code. The same result could
-     * be achieved using {@link Thenable#thenReturn(CheckedFunction)} and returning a null value.
+     * {@link Thenable#thenReturn(CheckedFunction)} method for callbacks that don't return anything. Please note that
+     * this method is just a syntactic sugar, created to avoid putting return statements in your code. The same
+     * result could be achieved using {@link Thenable#thenReturn(CheckedFunction)} and returning a null value.
      *
      * @see Thenable#thenReturn(CheckedFunction)
      */
     default Thenable<Void> then(CheckedConsumer<RESULT> then) {
-        CheckedFunction<RESULT, Void> function = (r) -> {
-            then.accept(r);
-            return null;
-        };
-        return thenReturn(function);
+        if (then == null) {
+            return thenReturn(null);
+        } else {
+            return thenReturn((r) -> {
+                then.accept(r);
+                return null;
+            });
+        }
     }
 
     /**

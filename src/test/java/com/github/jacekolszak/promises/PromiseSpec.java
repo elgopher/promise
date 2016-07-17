@@ -222,4 +222,11 @@ public class PromiseSpec {
         assertEquals("OK", resolvedValue);
     }
 
+    @Test
+    public void nullThenReturnCallbackShouldBeOmitted() {
+        Promise.resolve("OK").thenReturn(null).then(val -> this.resolvedValue = val);
+
+        assertEquals("OK", resolvedValue);
+    }
+
 }
