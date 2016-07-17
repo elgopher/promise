@@ -29,7 +29,7 @@ class PromiseAll {
 
     private void resolve(int valueNumber, Object value) {
         Promise.resolve(value).
-                thenVoid(response -> handleResponse(valueNumber, response)).
+                then(response -> handleResponse(valueNumber, response)).
                 catchVoid(promiseCallbacks::reject);
     }
 

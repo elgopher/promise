@@ -46,7 +46,7 @@ public class PromiseAllSpec {
     @Test
     public void shouldResolvePromiseForEmptyArray() {
         Object[] args = new Object[0];
-        Promise.all(args).thenVoid(t -> resolvedArray = args);
+        Promise.all(args).then(t -> resolvedArray = args);
 
         assertTrue(resolvedArray.length == 0);
     }

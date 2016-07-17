@@ -10,6 +10,7 @@ import org.junit.Test;
 public class PromiseSpec {
 
     private Object resolvedValue;
+    private Throwable rejectedException;
 
     @Test
     public void resolvedPromiseShouldSendValueToThenBlock() {
@@ -59,9 +60,9 @@ public class PromiseSpec {
     public void resolveShouldExecuteAllThenCallbacks() {
         BitSet bitSet = new BitSet(3);
         new Promise<>(p -> p.resolve("OK")).
-                thenVoid(v -> bitSet.set(0)).
-                thenVoid(v -> bitSet.set(1)).
-                thenVoid(v -> bitSet.set(2));
+                then(v -> bitSet.set(0)).
+                then(v -> bitSet.set(1)).
+                then(v -> bitSet.set(2));
 
         assertTrue(bitSet.get(0));
         assertTrue(bitSet.get(1));
@@ -172,7 +173,7 @@ public class PromiseSpec {
     public void thenCanBeAddedAfterPromiseWasResolvedAndNextPromiseWasExecuted() {
         // given
         Promise<String> promise = new Promise<>(p -> p.resolve("OK"));
-        promise.thenVoid(s -> {
+        promise.then(s -> {
         });
 
         // when
@@ -187,10 +188,10 @@ public class PromiseSpec {
         // given
         AtomicInteger i = new AtomicInteger();
         Promise<String> promise = new Promise<>(p -> p.resolve("OK"));
-        promise.thenVoid(s -> i.incrementAndGet());
+        promise.then(s -> i.incrementAndGet());
 
         // when
-        promise.thenVoid(s -> i.incrementAndGet());
+        promise.then(s -> i.incrementAndGet());
 
         // then
         assertEquals(2, i.get());
@@ -215,11 +216,38 @@ public class PromiseSpec {
         new Promise<>(null);
     }
 
+    // TODO This behaviour is inconsistent with thenReturn() - stick to Specification or modify it a little bit?
     @Test
-    public void nullThenCallbackShouldBeOmitted() {
-        Promise.resolve("OK").then(null).then(val -> this.resolvedValue = val);
+    public void nullThenCallbackShouldRejectWithIllegalArgumentException() {
+        Promise.resolve("OK").
+                then(null).
+                then(v -> this.resolvedValue = v).
+                catchVoid(e -> rejectedException = e);
+
+        assertNull(resolvedValue);
+        assertTrue(rejectedException instanceof IllegalArgumentException);
+    }
+
+    @Test
+    public void nullThenReturnCallbackShouldBeOmitted() {
+        Promise.resolve("OK").
+                thenReturn(null).
+                then(val -> this.resolvedValue = val).
+                catchVoid(e -> rejectedException = e);
 
         assertEquals("OK", resolvedValue);
+        assertNull(rejectedException);
+    }
+
+    @Test
+    public void nullThenPromiseCallbackShouldBeOmitted() {
+        Promise.resolve("OK").
+                thenPromise(null).
+                then(v -> this.resolvedValue = v).
+                catchVoid(e -> rejectedException = e);
+
+        assertEquals("OK", resolvedValue);
+        assertNull(rejectedException);
     }
 
 }

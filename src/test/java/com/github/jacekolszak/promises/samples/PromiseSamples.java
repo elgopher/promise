@@ -14,9 +14,8 @@ public class PromiseSamples {
     @Test
     public void loadFakeJSON() {
         getJSON("http://github.com").
-                then(json -> json.get("someProperty")).
-                then(String::toLowerCase).
-                thenVoid(System.out::println).
+                thenReturn(json -> json.get("someProperty")).
+                then(System.out::println).
                 catchVoid(Throwable::printStackTrace);
     }
 
@@ -24,7 +23,7 @@ public class PromiseSamples {
     public void loadJSONSequentially() {
         getJSON("http://github.com").
                 thenPromise(json -> getJSON(json.get("otherURL"))).
-                thenVoid(System.out::println).
+                then(System.out::println).
                 catchVoid(Throwable::printStackTrace);
     }
 
@@ -37,7 +36,7 @@ public class PromiseSamples {
                     fallbackJSON.put("otherURL", "http://default-url.com");
                     return fallbackJSON;
                 }).
-                thenVoid(System.out::println).
+                then(System.out::println).
                 catchVoid(Throwable::printStackTrace);
     }
 
@@ -47,7 +46,7 @@ public class PromiseSamples {
                 getJSON("https://fake-url.com/resources/1"),
                 getJSON("https://fake-url.com/resources/2"),
                 getJSON("https://fake-url.com/resources/3")
-        ).thenVoid(jsons -> {
+        ).then(jsons -> {
             System.out.println(jsons[0]);
             System.out.println(jsons[1]);
             System.out.println(jsons[2]);
@@ -60,13 +59,13 @@ public class PromiseSamples {
                 getJSON("https://fake-url.com/resources/1"),
                 getJSON("https://fake-url.com/resources/2"),
                 getJSON("https://fake-url.com/resources/3")
-        ).thenVoid(System.out::println);
+        ).then(System.out::println);
     }
 
     @Test
     public void timers() {
         timeout(getJSON("http://github.com"), 100).
-                thenVoid(System.out::println).
+                then(System.out::println).
                 catchVoid(Throwable::printStackTrace);
 
         delay(100).then(v -> getJSON("http://github.com"));
