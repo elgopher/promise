@@ -51,4 +51,12 @@ public class PromiseAllSpec {
         assertTrue(resolvedArray.length == 0);
     }
 
+    @Test
+    public void shouldAllowNullValues() {
+        Object[] arrayOfNulls = { null, null };
+        Promise.all(arrayOfNulls).then(arr -> resolvedArray = arr);
+
+        assertArrayEquals(arrayOfNulls, resolvedArray);
+    }
+
 }

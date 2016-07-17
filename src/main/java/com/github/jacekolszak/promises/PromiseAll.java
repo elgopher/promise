@@ -1,5 +1,6 @@
 package com.github.jacekolszak.promises;
 
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -9,7 +10,7 @@ class PromiseAll {
 
     private final int count;
 
-    private final ConcurrentMap<Integer, Object> responses = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Integer, Optional<Object>> responses = new ConcurrentHashMap<>();
 
     public PromiseAll(Object[] values, PromiseCallbacks<Object[]> promiseCallbacks) {
         if (values == null) {
@@ -33,11 +34,11 @@ class PromiseAll {
     }
 
     private void handleResponse(int valueNumber, Object response) {
-        responses.put(valueNumber, response);
+        responses.put(valueNumber, Optional.ofNullable(response));
         if (responses.size() == count) {
             Object[] values = new Object[count];
             for (int i = 0; i < count; i++) {
-                values[i] = responses.get(i);
+                values[i] = responses.get(i).orElseGet(() -> null);
             }
             promiseCallbacks.resolve(values);
         }
