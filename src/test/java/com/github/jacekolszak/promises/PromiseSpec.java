@@ -239,4 +239,15 @@ public class PromiseSpec {
         assertNull(rejectedException);
     }
 
+    @Test
+    public void nullThenPromiseCallbackShouldBeOmitted() {
+        Promise.resolve("OK").
+                thenPromise(null).
+                then(v -> this.resolvedValue = v).
+                catchVoid(e -> rejectedException = e);
+
+        assertEquals("OK", resolvedValue);
+        assertNull(rejectedException);
+    }
+
 }
