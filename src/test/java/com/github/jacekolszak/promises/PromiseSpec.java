@@ -10,6 +10,7 @@ import org.junit.Test;
 public class PromiseSpec {
 
     private Object resolvedValue;
+    private Throwable rejectedException;
 
     @Test
     public void resolvedPromiseShouldSendValueToThenBlock() {
@@ -215,18 +216,27 @@ public class PromiseSpec {
         new Promise<>(null);
     }
 
+    // TODO This behaviour is inconsistent with thenReturn() - stick to Specification or modify it a little bit?
     @Test
-    public void nullThenCallbackShouldBeOmitted() {
-        Promise.resolve("OK").then(null).then(val -> this.resolvedValue = val);
+    public void nullThenCallbackShouldRejectWithIllegalArgumentException() {
+        Promise.resolve("OK").
+                then(null).
+                then(v -> this.resolvedValue = v).
+                catchVoid(e -> rejectedException = e);
 
-        assertEquals("OK", resolvedValue);
+        assertNull(resolvedValue);
+        assertTrue(rejectedException instanceof IllegalArgumentException);
     }
 
     @Test
     public void nullThenReturnCallbackShouldBeOmitted() {
-        Promise.resolve("OK").thenReturn(null).then(val -> this.resolvedValue = val);
+        Promise.resolve("OK").
+                thenReturn(null).
+                then(val -> this.resolvedValue = val).
+                catchVoid(e -> rejectedException = e);
 
         assertEquals("OK", resolvedValue);
+        assertNull(rejectedException);
     }
 
 }

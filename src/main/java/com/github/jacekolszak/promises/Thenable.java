@@ -39,12 +39,14 @@ public interface Thenable<RESULT> {
      *
      * @see Thenable#thenReturn(CheckedFunction)
      */
-    default Thenable<Void> then(CheckedConsumer<RESULT> then) {
-        if (then == null) {
-            return thenReturn(null);
+    default Thenable<Void> then(CheckedConsumer<RESULT> callback) {
+        if (callback == null) {
+            return new Promise<>(p -> {
+                throw new IllegalArgumentException("Then callback cannot be null");
+            });
         } else {
             return thenReturn((r) -> {
-                then.accept(r);
+                callback.accept(r);
                 return null;
             });
         }
