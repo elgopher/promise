@@ -55,7 +55,7 @@ public class Timers {
         if (promise == null) throw new IllegalArgumentException("Promise cannot be null");
         return (Thenable<RESULT>) Promise.race(
                 promise,
-                delay(delay, executor).thenVoid(v -> {
+                delay(delay, executor).then(v -> {
                     throw new TimeoutException("Timeout waiting for promise ");
                 })
         );

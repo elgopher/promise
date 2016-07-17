@@ -2,7 +2,6 @@ package com.github.jacekolszak.promises;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 /**
@@ -69,7 +68,7 @@ public class Promise<RESULT> implements Thenable<RESULT> {
     }
 
     void doResolvePromise(Thenable<RESULT> promise) {
-        promise.thenVoid(this::doResolve);
+        promise.then(this::doResolve);
         promise.catchVoid(this::doReject);
     }
 
@@ -86,7 +85,7 @@ public class Promise<RESULT> implements Thenable<RESULT> {
     }
 
     @Override
-    public synchronized <NEW_RESULT> Promise<NEW_RESULT> then(CheckedFunction<RESULT, NEW_RESULT> callback) {
+    public synchronized <NEW_RESULT> Promise<NEW_RESULT> thenReturn(CheckedFunction<RESULT, NEW_RESULT> callback) {
         SuccessPromise<RESULT, NEW_RESULT> next = new SuccessPromise<>(callback);
         addNext(next);
         fireIfNecessarily();

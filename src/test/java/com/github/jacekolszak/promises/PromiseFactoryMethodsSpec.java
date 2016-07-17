@@ -14,7 +14,7 @@ public class PromiseFactoryMethodsSpec {
     @Test
     public void resolveShouldReturnValueImmediately() {
         String value = "OK";
-        Promise.resolve(value).thenVoid(s -> resolvedValue = s);
+        Promise.resolve(value).then(s -> resolvedValue = s);
 
         assertEquals(value, resolvedValue);
     }

@@ -20,7 +20,7 @@ class PromiseRace {
 
     private void resolve(Object value) {
         Promise.resolve(value).
-                thenVoid(promiseCallbacks::resolve).
+                then(promiseCallbacks::resolve).
                 catchVoid(promiseCallbacks::reject);
     }
 }

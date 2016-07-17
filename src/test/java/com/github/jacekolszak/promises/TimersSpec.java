@@ -5,7 +5,6 @@ import static junit.framework.TestCase.*;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -87,7 +86,7 @@ public class TimersSpec {
     @Test
     public void delayShouldRunThenCallbackAfterSpecifiedAmountOfTime() throws InterruptedException {
         // given
-        delay(10).thenVoid(v -> {
+        delay(10).then(v -> {
             resolved = true;
             latch.countDown();
         });
@@ -103,7 +102,7 @@ public class TimersSpec {
     public void delayShouldRunThenCallbackWithCustomExecutor() throws InterruptedException {
         // given
         ExecutorSpy executor = new ExecutorSpy();
-        delay(10, executor).thenVoid(v -> latch.countDown());
+        delay(10, executor).then(v -> latch.countDown());
 
         // when
         latch.await(50, TimeUnit.MILLISECONDS);
@@ -120,7 +119,7 @@ public class TimersSpec {
     @Test
     public void passingNullExecutorToDelayShouldUseDefaultOne() throws InterruptedException {
         // given
-        delay(10, null).thenVoid(v -> {
+        delay(10, null).then(v -> {
             resolved = true;
             latch.countDown();
         });

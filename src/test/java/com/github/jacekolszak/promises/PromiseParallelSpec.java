@@ -43,7 +43,7 @@ public class PromiseParallelSpec {
                                 fail(e.getMessage());
                             }
                         }))).
-                thenVoid(i -> {
+                then(i -> {
                     thenExecutionsCount.incrementAndGet();
                     this.resolvedValue = i;
                 });

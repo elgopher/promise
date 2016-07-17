@@ -17,34 +17,34 @@ public interface Thenable<RESULT> {
      *                 If the callback is null then skip execution of it and pass result to the next Promise in the
      *                 chain.
      */
-    <NEW_RESULT> Thenable<NEW_RESULT> then(CheckedFunction<RESULT, NEW_RESULT> callback);
+    <NEW_RESULT> Thenable<NEW_RESULT> thenReturn(CheckedFunction<RESULT, NEW_RESULT> callback);
 
     /**
      * Run the callback when Promise is resolved (on success). This is a special case of
-     * {@link Thenable#then(CheckedFunction)} method for callbacks returning Promises. Please note that this method
+     * {@link Thenable#thenReturn(CheckedFunction)} method for callbacks returning Promises. Please note that this method
      * is just a syntactic sugar, created to avoid casting Promises in your code. The same result could be achieved
-     * using {@link Thenable#then(CheckedFunction)}
+     * using {@link Thenable#thenReturn(CheckedFunction)}
      *
-     * @see Thenable#then(CheckedFunction)
+     * @see Thenable#thenReturn(CheckedFunction)
      */
     default <NEW_RESULT> Thenable<NEW_RESULT> thenPromise(CheckedFunction<RESULT, Thenable<NEW_RESULT>> callback) {
-        return then((CheckedFunction<RESULT, NEW_RESULT>) callback);
+        return thenReturn((CheckedFunction<RESULT, NEW_RESULT>) callback);
     }
 
     /**
      * Run the callback when Promise is resolved (on success). This is a special case of
-     * {@link Thenable#then(CheckedFunction)} method for callbacks that don't return anything. Please note that this
+     * {@link Thenable#thenReturn(CheckedFunction)} method for callbacks that don't return anything. Please note that this
      * method is just a syntactic sugar, created to avoid putting return statements in your code. The same result could
-     * be achieved using {@link Thenable#then(CheckedFunction)} and returning a null value.
+     * be achieved using {@link Thenable#thenReturn(CheckedFunction)} and returning a null value.
      *
-     * @see Thenable#then(CheckedFunction)
+     * @see Thenable#thenReturn(CheckedFunction)
      */
-    default Thenable<Void> thenVoid(CheckedConsumer<RESULT> then) {
+    default Thenable<Void> then(CheckedConsumer<RESULT> then) {
         CheckedFunction<RESULT, Void> function = (r) -> {
             then.accept(r);
             return null;
         };
-        return then(function);
+        return thenReturn(function);
     }
 
     /**
