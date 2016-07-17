@@ -2,6 +2,7 @@
 Promises for Java 8 strongly inspired by [ECMAScript 6.0](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). Write asynchronous code the way JavaScript does.
 
 [![Build status](https://travis-ci.org/jacekolszak/promises.svg?branch=master)](https://travis-ci.org/jacekolszak/promises)
+[![Gitter](https://badges.gitter.im/jacekolszak/promises.svg)](https://gitter.im/jacekolszak/promises?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## What is a Promise?
 * **placeholder** for a value (or an exception) returned from an **asynchronous** operation
