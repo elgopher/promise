@@ -28,16 +28,15 @@ Promises for Java 8 strongly inspired by [ECMAScript 6.0](https://developer.mozi
 ```java
 public void loadFakeJSON() {
     getJSON("http://github.com").
-            then(json -> json.get("someProperty")).
-            then(String::toLowerCase).
-            thenVoid(System.out::println).
+            thenReturn(json -> json.get("someProperty")).
+            then(System.out::println).
             catchVoid(Throwable::printStackTrace);
 }
 
 public void loadJSONSequentially() {
     getJSON("http://github.com").
             thenPromise(json -> getJSON(json.get("otherURL"))).
-            thenVoid(System.out::println).
+            then(System.out::println).
             catchVoid(Throwable::printStackTrace);
 }
 
@@ -49,7 +48,7 @@ public void catchFallback() {
                 fallbackJSON.put("otherURL", "http://default-url.com");
                 return fallbackJSON;
             }).
-            thenVoid(System.out::println).
+            then(System.out::println).
             catchVoid(Throwable::printStackTrace);
 }
 
@@ -58,7 +57,7 @@ public void all() {
             getJSON("https://fake-url.com/resources/1"),
             getJSON("https://fake-url.com/resources/2"),
             getJSON("https://fake-url.com/resources/3")
-    ).thenVoid(jsons -> {
+    ).then(jsons -> {
         System.out.println(jsons[0]);
         System.out.println(jsons[1]);
         System.out.println(jsons[2]);
@@ -70,17 +69,16 @@ public void race() {
             getJSON("https://fake-url.com/resources/1"),
             getJSON("https://fake-url.com/resources/2"),
             getJSON("https://fake-url.com/resources/3")
-    ).thenVoid(System.out::println);
+    ).then(System.out::println);
 }
 
 public void timers() {
-    timeout(getJSON("http://github.com"), 1000).
-            thenVoid(System.out::println).
+    timeout(getJSON("http://github.com"), 100).
+            then(System.out::println).
             catchVoid(Throwable::printStackTrace);
-            
+
     delay(100).then(v -> getJSON("http://github.com"));
 }
-
 
 private Promise<Map<String, String>> getJSON(String url) {
     return new Promise<>(p -> {
