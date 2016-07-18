@@ -39,7 +39,7 @@ try {
 * original API was designed by smart people after endless brainstorming :)
 
 ## When it should not be used?
-* Promises are for one-shot operations, that is, you can execute some method and get a self-contained response (or error), i.e. get some REST resource
+* Promise is for one-shot operations, that is, you can execute some method and get a self-contained response (or error), i.e. get some REST resource
 * When you need to monitor progress of the execution or process a stream of events then use something like [RxJava](https://github.com/ReactiveX/RxJava) instead
 
 ## Examples
@@ -137,4 +137,4 @@ dependencies {
 * Use all bleeding edge features of Java 8
 * API should allow to write code which is concise and easy to reason about 
 * API could be used with any other libraries and frameworks which executes code asynchronously (i.e. [Netty](https://github.com/netty/netty))
-* Promises created using API have to be thread safe
+* Promise created using API has to be thread safe
