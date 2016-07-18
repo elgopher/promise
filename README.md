@@ -31,12 +31,15 @@ try {
 
 ## Why would I use it?
 * because it is better suited for writing asynchronous code than Java 8's CompletableFuture
-    * API is much cleaner and easier to understand - just 2 instance method types (_thenXXX_, _catchXXX_) and 4 static factory methods (_all_, _race_, _resolve_, _reject_) 
-    * exceptions are properly caught and propagated to *catch* callbacks (no fear that some exception will be eaten up)
-    * exceptions can be handled similar way as they are normally handled in a blocking code
-    * code written using Promises is more readable and easier to understand
+    * API is much cleaner and easier to understand - just 2 instance method types (_thenXXX_, _catchXXX_) and 4 static factory methods (_all_, _race_, _resolve_, _reject_) solving most of the problems
+    * much better handling of exceptions
+        * exceptions thrown are not wrapped
+        * then/catch callbacks could throw checked exceptions
+        * Promise's executor code could throw an exception which will be handled by the Promise (no need to manually try/catch)
+        * therefore exceptions can be caught and processed similar way as they are normally handled in a blocking code
+    * Promise API enforces programmer to use an asynchronous programming, no way to run get() and block the current thread
+    * code written using Promises is a little bit less verbose and easier to understand
 * well tested (100% code covered by unit tests)
-* original API was designed by smart people after endless brainstorming :)
 
 ## When it should not be used?
 * Promise is for one-shot operations, that is, you can execute some method and get a self-contained response (or error), i.e. get some REST resource
