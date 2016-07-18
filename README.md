@@ -1,5 +1,5 @@
-# Promises for Java 8
-Promises for Java 8 strongly inspired by [ECMAScript 6.0](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). Write asynchronous code the way JavaScript does.
+# Promise for Java 8
+Write a clean and intuitive asynchronous code in Java without a pain, the same way as [ECMAScript 6.0](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) does.
 
 [![Build status](https://travis-ci.org/jacekolszak/promises.svg?branch=master)](https://travis-ci.org/jacekolszak/promises)
 [![Gitter](https://badges.gitter.im/jacekolszak/promises.svg)](https://gitter.im/jacekolszak/promises?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
