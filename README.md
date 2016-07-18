@@ -112,6 +112,29 @@ private Promise<Map<String, String>> getJSON(String url) {
 
 Source code: [PromiseSamples.java](src/test/java/com/github/jacekolszak/promises/samples/PromiseSamples.java)
 
+## How to use with Maven
+
+Add repository:
+
+```xml
+<repositories>
+    <repository>
+        <id>jacekolszak</id>
+        <url>https://dl.bintray.com/jacekolszak/maven</url>
+    </repository>
+</repositories>
+```
+
+And use the artifact like this:
+
+```xml
+<dependency>
+	    <groupId>com.github.jacekolszak</groupId>
+	    <artifactId>promises</artifactId>
+	    <version>1.0</version>
+</dependency>
+```
+
 ## How to use with Gradle
 
 Add repository to your build.gradle file:
@@ -119,7 +142,7 @@ Add repository to your build.gradle file:
 ```groovy
 repositories {
     maven {
-        url  "http://dl.bintray.com/jacekolszak/maven" 
+        url  "https://dl.bintray.com/jacekolszak/maven" 
     }    
 }
 ```
