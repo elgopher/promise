@@ -1,5 +1,23 @@
 # Promise for Java 8
-Write a clean and intuitive asynchronous code in Java without a pain, the same way as [ECMAScript 6.0](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) does.
+Write a clean and intuitive asynchronous code in Java without a pain, the same way as [ECMAScript 6.0](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) does:
+
+```java
+getJSON("http://github.com").
+        then(System.out::println).
+        catchVoid(Throwable::printStackTrace);
+}
+```
+
+which is an asynchronous alternative to the following piece of blocking code:
+
+```java
+try {
+    json = getJSON("http://github.com");
+    System.out.println(json);
+} catch (Throwable e) {
+    e.printStackTrace();
+}
+```
 
 [![Build status](https://travis-ci.org/jacekolszak/promises.svg?branch=master)](https://travis-ci.org/jacekolszak/promises)
 [![Gitter](https://badges.gitter.im/jacekolszak/promises.svg)](https://gitter.im/jacekolszak/promises?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
