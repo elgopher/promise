@@ -19,8 +19,8 @@ try {
 }
 ```
 
-[![Build status](https://travis-ci.org/jacekolszak/promises.svg?branch=master)](https://travis-ci.org/jacekolszak/promises)
-[![Gitter](https://badges.gitter.im/jacekolszak/promise.svg)](https://gitter.im/jacekolszak/promise?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Build status](https://travis-ci.org/jacekolszak/promise.svg?branch=master)](https://travis-ci.org/jacekolszak/promise)
+[![Gitter](https://badges.gitter.im/jacekolszak/promises.svg)](https://gitter.im/jacekolszak/promises?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## What is a Promise?
 * **placeholder** for a value (or an exception) returned from an **asynchronous** operation
